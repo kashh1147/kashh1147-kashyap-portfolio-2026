@@ -89,7 +89,7 @@ body::before {
   padding: 28px 0 56px;
 }
 
-/* ============ HEADER ============ */
+/* HEADER */
 .widget-header {
   border: 1px solid var(--line);
   background: var(--panel);
@@ -147,7 +147,6 @@ body::before {
 
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-/* ============ HEADER STATS ============ */
 .header-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -183,7 +182,6 @@ body::before {
 }
 @keyframes riseIn { to { transform: translateY(0); opacity: 1; } }
 
-/* ============ SECTION BANDS ============ */
 .section-band {
   padding: clamp(28px, 4vw, 44px);
   margin-bottom: 22px;
@@ -224,7 +222,6 @@ body::before {
   display: block;
 }
 
-/* ============ WORKFLOW (8 steps) ============ */
 .workflow-track {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -321,7 +318,6 @@ body::before {
   color: var(--steel);
 }
 
-/* ============ TABBED CASE STUDIES ============ */
 .tabs {
   display: flex;
   gap: 4px;
@@ -376,7 +372,6 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* === Case study layout === */
 .case-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -499,7 +494,6 @@ body::before {
   line-height: 1.6;
 }
 
-/* === Image gallery in case === */
 .case-gallery {
   display: grid;
   gap: 12px;
@@ -509,7 +503,6 @@ body::before {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
-.gallery-grid.single-col { grid-template-columns: 1fr; }
 
 .gallery-item {
   position: relative;
@@ -526,13 +519,7 @@ body::before {
   box-shadow: var(--shadow-soft);
   border-color: var(--steel);
 }
-.gallery-item img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
 
-/* Placeholder styling */
 .placeholder {
   width: 100%; height: 100%;
   display: flex;
@@ -611,7 +598,6 @@ body::before {
   border-radius: 0 4px 4px 0;
 }
 
-/* ============ TOOLS SECTION ============ */
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -682,31 +668,6 @@ body::before {
   width: var(--fill);
 }
 
-/* ============ HONEST STATEMENT ============ */
-.honesty-card {
-  padding: 26px;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--amber);
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, rgba(200,131,63,0.06), rgba(255,255,255,0.86));
-}
-.honesty-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--amber);
-  letter-spacing: .14em;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-.honesty-text {
-  font-size: 14px;
-  color: var(--ink);
-  line-height: 1.75;
-}
-.honesty-text strong { color: var(--steel-dark); font-weight: 700; }
-
-/* ============ MOBILE ============ */
 @media (max-width: 920px) {
   .header-stats { grid-template-columns: repeat(2, 1fr); }
   .workflow-track { grid-template-columns: repeat(2, 1fr); }
@@ -745,10 +706,9 @@ body::before {
 <div class="page">
   <h2 class="sr-only">BIM/VDC showcase — Kashyap Joshi project case studies</h2>
 
-  <!-- HEADER -->
   <header class="widget-header">
     <div class="widget-header-inner">
-      <div class="eyebrow">BIM · VDC · Digital Construction</div>
+      <div class="eyebrow">BIM &middot; VDC &middot; Digital Construction</div>
       <h1 class="widget-title">Three projects. Three proof points. <span style="color: var(--steel-dark)">Real BIM/VDC work.</span></h1>
       <p class="widget-lead">
         From full Revit ownership on a residential bungalow, to multi-discipline clash detection on an international commercial project, to 10,000-iteration quantitative risk modeling — this is the digital construction work I can actually defend in an interview.
@@ -763,11 +723,10 @@ body::before {
     </div>
   </header>
 
-  <!-- SECTION 01 — 8-STEP WORKFLOW -->
   <section class="section-band">
     <div class="section-title">
       <div>
-        <span class="section-num">01 · The Process</span>
+        <span class="section-num">01 &middot; The Process</span>
         <h2>An 8-step VDC coordination workflow.</h2>
       </div>
       <p class="sub">From BIM Execution Plan to as-built handover. Click any step to see what it involves and the tools used.</p>
@@ -776,11 +735,10 @@ body::before {
     <div class="workflow-track" id="workflowTrack"></div>
   </section>
 
-  <!-- SECTION 02 — CASE STUDIES (TABBED) -->
   <section class="section-band">
     <div class="section-title">
       <div>
-        <span class="section-num">02 · Case Studies</span>
+        <span class="section-num">02 &middot; Case Studies</span>
         <h2>Three projects I can show you.</h2>
       </div>
       <p class="sub">Honest scope. Real screenshots coming. Defensible claims you can stress-test in interview.</p>
@@ -792,13 +750,12 @@ body::before {
       <button class="tab-btn" data-tab="brightsource"><span class="tab-num">03</span>BrightSource Risk Analysis</button>
     </div>
 
-    <!-- TAB 1: JNK BUNGALOW -->
     <div class="tab-panel active" data-panel="bungalow">
       <div class="case-grid">
         <div class="case-meta">
           <div class="case-meta-title">Case Study 01</div>
           <div class="case-title">JNK Residential Bungalow</div>
-          <div class="case-sub">Full Revit ownership · Gujarat, India · 2024</div>
+          <div class="case-sub">Full Revit ownership &middot; Gujarat, India &middot; 2024</div>
 
           <div class="case-info-grid">
             <div class="case-info"><div class="case-info-label">Type</div><div class="case-info-value">Residential</div></div>
@@ -837,8 +794,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⎚</div>
-                  <div class="ph-label">Revit · 3D Isometric</div>
+                  <div class="ph-icon">&#9882;</div>
+                  <div class="ph-label">Revit &middot; 3D Isometric</div>
                   <div class="ph-name">Federated model view</div>
                 </div>
                 <div class="ph-file">revit-bungalow-3d.png</div>
@@ -848,8 +805,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">▭</div>
-                  <div class="ph-label">Revit · Floor Plan</div>
+                  <div class="ph-icon">&#9645;</div>
+                  <div class="ph-label">Revit &middot; Floor Plan</div>
                   <div class="ph-name">Ground floor with dimensions</div>
                 </div>
                 <div class="ph-file">revit-bungalow-plan.png</div>
@@ -859,8 +816,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⌐</div>
-                  <div class="ph-label">Revit · Section</div>
+                  <div class="ph-icon">&#8976;</div>
+                  <div class="ph-label">Revit &middot; Section</div>
                   <div class="ph-name">Vertical section cut</div>
                 </div>
                 <div class="ph-file">revit-bungalow-section.png</div>
@@ -870,8 +827,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">▤</div>
-                  <div class="ph-label">Revit · Schedule</div>
+                  <div class="ph-icon">&#9636;</div>
+                  <div class="ph-label">Revit &middot; Schedule</div>
                   <div class="ph-name">Door/window schedule</div>
                 </div>
                 <div class="ph-file">revit-bungalow-schedule.png</div>
@@ -881,8 +838,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">▣</div>
-                  <div class="ph-label">Revit · Sheet</div>
+                  <div class="ph-icon">&#9635;</div>
+                  <div class="ph-label">Revit &middot; Sheet</div>
                   <div class="ph-name">Drawing sheet w/ titleblock</div>
                 </div>
                 <div class="ph-file">revit-bungalow-sheet.png</div>
@@ -892,8 +849,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⌗</div>
-                  <div class="ph-label">Revit · Detail</div>
+                  <div class="ph-icon">&#8983;</div>
+                  <div class="ph-label">Revit &middot; Detail</div>
                   <div class="ph-name">Wall section detail (LOD 300)</div>
                 </div>
                 <div class="ph-file">revit-bungalow-detail.png</div>
@@ -904,17 +861,16 @@ body::before {
       </div>
     </div>
 
-    <!-- TAB 2: HONG KONG -->
     <div class="tab-panel" data-panel="hongkong">
       <div class="case-grid">
         <div class="case-meta">
           <div class="case-meta-title">Case Study 02</div>
           <div class="case-title">Hong Kong Commercial Project</div>
-          <div class="case-sub">Multi-discipline clash coordination · 2024 · Client confidential</div>
+          <div class="case-sub">Multi-discipline clash coordination &middot; 2024 &middot; Client confidential</div>
 
           <div class="case-info-grid">
             <div class="case-info"><div class="case-info-label">Type</div><div class="case-info-value">Commercial</div></div>
-            <div class="case-info"><div class="case-info-label">Disciplines</div><div class="case-info-value">ARC · STR · MEP</div></div>
+            <div class="case-info"><div class="case-info-label">Disciplines</div><div class="case-info-value">ARC &middot; STR &middot; MEP</div></div>
             <div class="case-info"><div class="case-info-label">Clash tests</div><div class="case-info-value">4 tests</div></div>
             <div class="case-info"><div class="case-info-label">Software</div><div class="case-info-value">Navisworks</div></div>
           </div>
@@ -933,7 +889,7 @@ body::before {
 
           <div class="case-list-label">VDC workflow applied</div>
           <ul class="case-list">
-            <li>Discipline model export (Revit → NWC)</li>
+            <li>Discipline model export (Revit &rarr; NWC)</li>
             <li>Model federation in Navisworks Manage</li>
             <li>Clash detective rule setup (hard, clearance, duplicate)</li>
             <li>Issue documentation with saved viewpoints</li>
@@ -943,7 +899,7 @@ body::before {
           <div class="case-callout">
             <div class="case-callout-label">Why this proof point matters</div>
             <div class="case-callout-text">
-              Same federated coordination workflow used on US healthcare and commercial mega-projects. International experience with multi-discipline BIM at production scale.
+              Same federated coordination workflow used on major US healthcare and commercial projects. International experience with multi-discipline BIM at production scale.
             </div>
           </div>
         </div>
@@ -955,8 +911,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">◬</div>
-                  <div class="ph-label">Navisworks · Federation</div>
+                  <div class="ph-icon">&#9772;</div>
+                  <div class="ph-label">Navisworks &middot; Federation</div>
                   <div class="ph-name">All disciplines combined</div>
                 </div>
                 <div class="ph-file">navisworks-federated.png</div>
@@ -966,7 +922,7 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⊕</div>
+                  <div class="ph-icon">&#8853;</div>
                   <div class="ph-label">Clash Detective</div>
                   <div class="ph-name">Test setup panel</div>
                 </div>
@@ -977,8 +933,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⊗</div>
-                  <div class="ph-label">Clash · 3D Highlighted</div>
+                  <div class="ph-icon">&#8855;</div>
+                  <div class="ph-label">Clash &middot; 3D Highlighted</div>
                   <div class="ph-name">Conflict in federated view</div>
                 </div>
                 <div class="ph-file">navisworks-clash-3d.png</div>
@@ -988,7 +944,7 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">◈</div>
+                  <div class="ph-icon">&#9672;</div>
                   <div class="ph-label">Clash Report</div>
                   <div class="ph-name">T01-T04 results summary</div>
                 </div>
@@ -1000,13 +956,12 @@ body::before {
       </div>
     </div>
 
-    <!-- TAB 3: BRIGHTSOURCE -->
     <div class="tab-panel" data-panel="brightsource">
       <div class="case-grid">
         <div class="case-meta">
           <div class="case-meta-title">Case Study 03</div>
           <div class="case-title">BrightSource Solar Project — Risk Analysis</div>
-          <div class="case-sub">Monte Carlo simulation · PJM 6015 · Northeastern · March 2025</div>
+          <div class="case-sub">Monte Carlo simulation &middot; PJM 6015 &middot; Northeastern &middot; March 2025</div>
 
           <div class="case-info-grid">
             <div class="case-info"><div class="case-info-label">Tool</div><div class="case-info-value">Primavera RA</div></div>
@@ -1023,7 +978,7 @@ body::before {
           <ul class="case-list">
             <li><strong>80% confidence completion:</strong> Jan 27, 2026</li>
             <li><strong>Recommended budget:</strong> $835K with $850K contingency cap</li>
-            <li><strong>Top schedule risk driver:</strong> Monitor & Control Project Work (165% SSI)</li>
+            <li><strong>Top schedule risk driver:</strong> Monitor &amp; Control Project Work (165% SSI)</li>
             <li><strong>Top cost risk driver:</strong> Financing/Contracts (61% sensitivity)</li>
             <li><strong>Critical foundational tasks:</strong> Project Charter, Kick-off Meeting, High-Level Planning (100% criticality index)</li>
           </ul>
@@ -1054,8 +1009,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⌶</div>
-                  <div class="ph-label">PRA · Finish Distribution</div>
+                  <div class="ph-icon">&#8950;</div>
+                  <div class="ph-label">PRA &middot; Finish Distribution</div>
                   <div class="ph-name">Project completion histogram</div>
                 </div>
                 <div class="ph-file">pra-finish-distribution.png</div>
@@ -1065,8 +1020,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⌹</div>
-                  <div class="ph-label">PRA · Cost Distribution</div>
+                  <div class="ph-icon">&#8953;</div>
+                  <div class="ph-label">PRA &middot; Cost Distribution</div>
                   <div class="ph-name">Cost probability curve</div>
                 </div>
                 <div class="ph-file">pra-cost-distribution.png</div>
@@ -1076,8 +1031,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⊟</div>
-                  <div class="ph-label">PRA · Schedule Tornado</div>
+                  <div class="ph-icon">&#8863;</div>
+                  <div class="ph-label">PRA &middot; Schedule Tornado</div>
                   <div class="ph-name">Duration sensitivity ranking</div>
                 </div>
                 <div class="ph-file">pra-tornado-schedule.png</div>
@@ -1087,8 +1042,8 @@ body::before {
               <div class="placeholder">
                 <span class="ph-tag">PREVIEW</span>
                 <div>
-                  <div class="ph-icon">⊟</div>
-                  <div class="ph-label">PRA · SSI Tornado</div>
+                  <div class="ph-icon">&#8863;</div>
+                  <div class="ph-label">PRA &middot; SSI Tornado</div>
                   <div class="ph-name">Schedule sensitivity index</div>
                 </div>
                 <div class="ph-file">pra-tornado-ssi.png</div>
@@ -1100,44 +1055,24 @@ body::before {
     </div>
   </section>
 
-  <!-- SECTION 03 — TOOLS MASTERY -->
   <section class="section-band">
     <div class="section-title">
       <div>
-        <span class="section-num">03 · Tools Mastery</span>
+        <span class="section-num">03 &middot; Tools Mastery</span>
         <h2>The VDC software stack I work with.</h2>
       </div>
       <p class="sub">Proficiency levels reflect production work — not just classroom exposure.</p>
     </div>
     <div class="tools-grid" id="toolsGrid"></div>
   </section>
-
-  <!-- SECTION 04 — HONESTY -->
-  <section class="section-band">
-    <div class="section-title">
-      <div>
-        <span class="section-num">04 · Straight Talk</span>
-        <h2>What I can defend in an interview.</h2>
-      </div>
-      <p class="sub">Honest scope. No overclaiming.</p>
-    </div>
-
-    <div class="honesty-card">
-      <div class="honesty-label">For Gilbane recruiters reading this</div>
-      <div class="honesty-text">
-        I'm a <strong>BIM/VDC Coordinator candidate</strong>, not a 10-year veteran. What I bring is <strong>real Revit ownership on a built project</strong>, <strong>real Navisworks clash detection</strong> on an international commercial job, and <strong>quantitative risk modeling that most candidates can't show</strong>. Layered onto 14 months of actual construction site experience in India and a live US healthcare co-op at UMass Chan Medical School. I won't pretend to know what I don't. I will learn fast and contribute on day one.
-      </div>
-    </div>
-  </section>
 </div>
 
 <script>
-// ============ DATA ============
 const WORKFLOW = [
   {num:"01", title:"BIM Execution Plan", short:"Define scope, LOD, deliverables", desc:"Establish the BIM Execution Plan (BEP) — defines modeling scope, level of development (LOD 100-500), file-naming conventions, coordinate systems, model ownership, and deliverables across all project disciplines.", tools:["BEP Template","ISO 19650","CDE setup"]},
   {num:"02", title:"Discipline Modeling", short:"Build ARC, STR, MEP models", desc:"Each discipline builds their own authoring model in native software. Architects in Revit ARC, structural engineers in Revit STR (or Tekla), MEP engineers in Revit MEP. Model linking and shared parameters maintained throughout.", tools:["Revit","Tekla","AutoCAD","Civil 3D"]},
   {num:"03", title:"Federation", short:"Combine into Navisworks", desc:"Export discipline models to NWC format and federate them in Navisworks Manage. Set up the federated model with proper coordinate systems, search sets, and viewpoints for coordination meetings.", tools:["Navisworks","NWC export","Search sets"]},
-  {num:"04", title:"Clash Detection", short:"Identify conflicts systematically", desc:"Run Clash Detective tests across discipline pairs (ARC×STR, ARC×MEP, STR×MEP, MEP×MEP). Configure rules for hard clashes, clearance clashes, and duplicate elements. Tag, document, and assign clashes for resolution.", tools:["Clash Detective","Saved viewpoints","Issue tracking"]},
+  {num:"04", title:"Clash Detection", short:"Identify conflicts systematically", desc:"Run Clash Detective tests across discipline pairs (ARC\u00d7STR, ARC\u00d7MEP, STR\u00d7MEP, MEP\u00d7MEP). Configure rules for hard clashes, clearance clashes, and duplicate elements. Tag, document, and assign clashes for resolution.", tools:["Clash Detective","Saved viewpoints","Issue tracking"]},
   {num:"05", title:"Issue Coordination Review", short:"Resolve with design team", desc:"Hold weekly Issue Coordination Reviews (ICR) with design teams. Walk through clash reports, agree on resolution responsibility, prioritize critical-path issues, and document resolutions in the federated model.", tools:["BIM 360","ACC","Bluebeam"]},
   {num:"06", title:"4D Scheduling", short:"Link model to schedule", desc:"Link the federated model to project schedule (Primavera P6 or MS Project) to create 4D simulations. Use TimeLiner to visualize sequence, identify schedule-related conflicts, and communicate construction sequence to field teams.", tools:["Navisworks TimeLiner","P6","Synchro"]},
   {num:"07", title:"Construction Issue Tracking", short:"Document & resolve field issues", desc:"During construction, use the model as a single source of truth. Document RFIs against model views. Update the model to reflect approved field changes. Push updates back to the CDE.", tools:["Procore","BIM 360","RFI workflow"]},
@@ -1153,7 +1088,6 @@ const TOOLS = [
   {name:"AutoCAD", prof:"Production proficient", color:"#475569", abbr:"AC", fill:90, desc:"Construction documentation. 14 months of working drawings at JNK Architects across 8 projects."}
 ];
 
-// ============ WORKFLOW RENDER ============
 const wfTrack = document.getElementById("workflowTrack");
 wfTrack.innerHTML = WORKFLOW.map((w,i) => `
   <div class="workflow-step" data-index="${i}" onclick="toggleWorkflow(${i})">
@@ -1176,14 +1110,13 @@ function toggleWorkflow(idx) {
   steps[idx].classList.add("is-open");
   const w = WORKFLOW[idx];
   inner.innerHTML = `
-    <div class="wdp-title">Step ${w.num} · ${w.title}</div>
+    <div class="wdp-title">Step ${w.num} &middot; ${w.title}</div>
     <div class="wdp-desc">${w.desc}</div>
     <div class="wdp-tools">${w.tools.map(t => `<span class="wdp-tool">${t}</span>`).join("")}</div>
   `;
   panel.classList.add("is-visible");
 }
 
-// ============ TABS ============
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.tab;
@@ -1194,7 +1127,6 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
 });
 
-// ============ TOOLS RENDER ============
 document.getElementById("toolsGrid").innerHTML = TOOLS.map(t => `
   <div class="tool-card" style="--fill:${t.fill}%">
     <div class="tool-header">
@@ -1209,7 +1141,6 @@ document.getElementById("toolsGrid").innerHTML = TOOLS.map(t => `
   </div>
 `).join("");
 
-// ============ ANIMATIONS ============
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isTouch = window.matchMedia("(hover: none)").matches;
 const isSmallScreen = window.innerWidth < 768;
@@ -1259,7 +1190,6 @@ const metricObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll(".header-stats").forEach(el => metricObserver.observe(el));
 
-// Cursor light
 if (!isTouch && !reduceMotion) {
   const light = document.querySelector(".cursor-light");
   window.addEventListener("pointermove", (e) => {
@@ -1269,7 +1199,6 @@ if (!isTouch && !reduceMotion) {
   });
 }
 
-// 3D tilt on tool cards
 if (!isTouch && !reduceMotion) {
   document.querySelectorAll(".tool-card").forEach(card => {
     card.addEventListener("pointermove", (event) => {
@@ -1282,7 +1211,6 @@ if (!isTouch && !reduceMotion) {
   });
 }
 
-// Blueprint canvas
 if (!isSmallScreen && !isTouch && !reduceMotion) {
   const canvas = document.querySelector(".blueprint-canvas");
   const ctx = canvas.getContext("2d");
