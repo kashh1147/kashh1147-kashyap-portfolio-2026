@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India vs USA Construction — Kashyap Joshi</title>
+<meta name="description" content="Two construction markets, one career. What I learned building in India and what I've added in the US — and why bridging both is my edge.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111827;
+  --ink-soft: #475569;
+  --ink-muted: #7c8796;
+  --paper: #fbfcfd;
+  --panel: rgba(255,255,255,0.86);
+  --line: rgba(30,41,59,0.12);
+  --line-strong: rgba(30,41,59,0.22);
+  --sage: #5f8d7a;
+  --sage-dark: #3f6a59;
+  --steel: #2f6690;
+  --steel-dark: #1f4d70;
+  --amber: #c3833f;
+  --brick: #a64b43;
+  --india: #c3833f;
+  --india-dark: #8e5e25;
+  --india-bg: rgba(195,131,63,0.08);
+  --india-border: rgba(195,131,63,0.28);
+  --usa: #2f6690;
+  --usa-dark: #1f4d70;
+  --usa-bg: rgba(47,102,144,0.08);
+  --usa-border: rgba(47,102,144,0.28);
+  --shadow: 0 18px 55px rgba(15,23,42,0.11);
+  --shadow-soft: 0 8px 28px rgba(15,23,42,0.08);
+  --radius: 8px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(47,102,144,0.18), transparent 30rem),
+    radial-gradient(circle at 82% 14%, rgba(195,131,63,0.18), transparent 32rem),
+    linear-gradient(180deg, #eef3f5 0%, #fbfcfd 36%, #f7f4ee 100%);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: -3;
+  background-image:
+    linear-gradient(rgba(47,102,144,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,102,144,0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 78%);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap;
+}
+
+.blueprint-canvas {
+  position: fixed; inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.cursor-light {
+  position: fixed; left: 0; top: 0;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(circle, rgba(200,131,63,0.16), rgba(95,141,122,0.08) 38%, transparent 70%);
+  transition: opacity 300ms ease;
+}
+
+.page {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
+
+/* HEADER */
+.widget-header {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4vw, 48px);
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.widget-header::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px),
+    linear-gradient(transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+}
+.widget-header-inner { position: relative; z-index: 1; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--steel);
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 22px;
+}
+.eyebrow-line {
+  width: 32px; height: 2px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: lineExpand 700ms var(--ease) 200ms forwards;
+}
+@keyframes lineExpand { to { transform: scaleX(1); } }
+
+.eyebrow-text {
+  display: inline-block;
+  position: relative;
+}
+.eyebrow-text::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--steel);
+  animation: caretBlink 700ms steps(2) infinite;
+}
+.eyebrow-text.done::after {
+  opacity: 0;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
+
+.widget-title {
+  font-size: clamp(34px, 5.5vw, 56px);
+  line-height: 1;
+  font-weight: 880;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+  max-width: 800px;
+  opacity: 0; transform: translateY(30px);
+  animation: fadeUp 1000ms var(--ease) 700ms forwards;
+}
+.widget-title .accent-india {
+  color: var(--india-dark);
+  position: relative;
+  display: inline-block;
+}
+.widget-title .accent-india::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 2px;
+  width: 100%; height: 4px;
+  background: var(--india);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: underline 800ms var(--ease) 1500ms forwards;
+}
+.widget-title .accent-usa {
+  color: var(--usa-dark);
+  position: relative;
+  display: inline-block;
+}
+.widget-title .accent-usa::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 2px;
+  width: 100%; height: 4px;
+  background: var(--usa);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: underline 800ms var(--ease) 1900ms forwards;
+}
+@keyframes underline { to { transform: scaleX(1); } }
+
+.widget-lead {
+  max-width: 720px;
+  color: var(--ink-soft);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.7;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 1000ms var(--ease) 1100ms forwards;
+}
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER STATS */
+.header-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+}
+.h-stat {
+  padding: 16px;
+  border: 1px solid rgba(30,41,59,0.11);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.64);
+  opacity: 0; transform: translateY(18px);
+  animation: riseIn 760ms var(--ease) forwards;
+  transition: transform 350ms var(--ease), box-shadow 350ms ease, border-color 350ms ease;
+}
+.h-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--line-strong);
+}
+.h-stat:nth-child(1) { animation-delay: 1400ms; }
+.h-stat:nth-child(2) { animation-delay: 1500ms; }
+.h-stat:nth-child(3) { animation-delay: 1600ms; }
+.h-stat b {
+  display: block;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.h-stat.india b { color: var(--india-dark); }
+.h-stat.usa b { color: var(--usa-dark); }
+.h-stat.both b { color: var(--sage-dark); }
+.h-stat span {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+@keyframes riseIn { to { transform: translateY(0); opacity: 1; } }
+
+/* SECTION */
+.section-band {
+  padding: clamp(28px, 4vw, 44px);
+  margin-bottom: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 800ms var(--ease), transform 800ms var(--ease);
+}
+.section-band.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.section-title h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.section-title .sub {
+  max-width: 420px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* COMPARISON BARS */
+.legend-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.legend-swatch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+  animation: shimmer 2.8s ease-in-out infinite;
+}
+.legend-swatch.india { background: var(--india); }
+.legend-swatch.usa { background: var(--usa); }
+.legend-swatch.usa::after { animation-delay: 1.4s; }
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-120%); }
+  50% { transform: translateX(120%); }
+}
+.legend-item.india { color: var(--india-dark); }
+.legend-item.usa { color: var(--usa-dark); }
+
+.bars-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.bar-row {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease);
+}
+.bar-row.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.bar-label-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.bar-label-detail {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.bar-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.bar-cell {
+  position: relative;
+  height: 36px;
+  border-radius: 4px;
+  background: rgba(30,41,59,0.04);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  transition: border-color 250ms ease, transform 250ms var(--ease);
+}
+.bar-cell:hover {
+  transform: scale(1.01);
+  border-color: var(--line-strong);
+}
+
+.bar-fill {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 0;
+  transition: width 1700ms var(--ease);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+}
+.bar-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+.bar-row.visible .bar-fill::after {
+  animation: barShimmer 2.4s var(--ease) 1.6s 1 forwards;
+}
+@keyframes barShimmer {
+  to { transform: translateX(100%); }
+}
+
+.bar-row.visible .bar-fill {
+  width: var(--fill);
+}
+
+.bar-cell.india .bar-fill {
+  left: 0;
+  background: linear-gradient(90deg, var(--india), var(--india-dark));
+  justify-content: flex-end;
+  transition-delay: 0ms;
+}
+
+.bar-cell.usa .bar-fill {
+  right: 0;
+  background: linear-gradient(90deg, var(--usa-dark), var(--usa));
+  justify-content: flex-start;
+  transition-delay: 500ms;
+}
+
+.bar-value-label {
+  color: white;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 500ms var(--ease);
+}
+.bar-row.visible .bar-cell.india .bar-value-label {
+  transition-delay: 1300ms;
+  opacity: 1;
+}
+.bar-row.visible .bar-cell.usa .bar-value-label {
+  transition-delay: 1800ms;
+  opacity: 1;
+}
+
+.bar-disclaimer {
+  margin-top: 22px;
+  padding: 12px 16px;
+  background: rgba(95,141,122,0.06);
+  border: 1px solid rgba(95,141,122,0.18);
+  border-left: 3px solid var(--sage);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  letter-spacing: .03em;
+  line-height: 1.6;
+}
+
+/* COMPARISON PANELS */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.compare-panel {
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 800ms var(--ease), transform 800ms var(--ease), box-shadow 350ms ease;
+}
+.compare-panel.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.compare-panel:nth-child(2) {
+  transition-delay: 200ms;
+}
+
+.compare-panel.india {
+  background: linear-gradient(135deg, var(--india-bg), rgba(195,131,63,0.02));
+  border: 1px solid var(--india-border);
+}
+.compare-panel.usa {
+  background: linear-gradient(135deg, var(--usa-bg), rgba(47,102,144,0.02));
+  border: 1px solid var(--usa-border);
+}
+
+.compare-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1000ms var(--ease);
+}
+.compare-panel.india::before { background: var(--india); }
+.compare-panel.usa::before { background: var(--usa); }
+.compare-panel.visible::before { transform: scaleY(1); }
+
+.panel-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms var(--ease) 400ms, transform 500ms var(--ease) 400ms;
+}
+.compare-panel.visible .panel-eyebrow { opacity: 1; transform: translateY(0); }
+.compare-panel.india .panel-eyebrow { color: var(--india-dark); }
+.compare-panel.usa .panel-eyebrow { color: var(--usa-dark); }
+
+.panel-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 600ms var(--ease) 500ms, transform 600ms var(--ease) 500ms;
+}
+.compare-panel.visible .panel-title { opacity: 1; transform: translateY(0); }
+.compare-panel.india .panel-title { color: var(--india-dark); }
+.compare-panel.usa .panel-title { color: var(--usa-dark); }
+
+.panel-sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 22px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms var(--ease) 700ms, transform 500ms var(--ease) 700ms;
+}
+.compare-panel.visible .panel-sub { opacity: 1; transform: translateY(0); }
+
+.panel-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel-item {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 14px;
+  align-items: start;
+  opacity: 0;
+  transform: translateX(-16px);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+}
+.compare-panel.visible .panel-item { opacity: 1; transform: translateX(0); }
+.compare-panel.visible .panel-item:nth-child(1) { transition-delay: 900ms; }
+.compare-panel.visible .panel-item:nth-child(2) { transition-delay: 1050ms; }
+.compare-panel.visible .panel-item:nth-child(3) { transition-delay: 1200ms; }
+.compare-panel.visible .panel-item:nth-child(4) { transition-delay: 1350ms; }
+
+.panel-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: transform 400ms var(--ease), box-shadow 400ms ease;
+}
+.panel-item:hover .panel-item-icon {
+  transform: scale(1.1) rotate(-4deg);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+.compare-panel.india .panel-item-icon {
+  background: rgba(195,131,63,0.15);
+  color: var(--india-dark);
+}
+.compare-panel.usa .panel-item-icon {
+  background: rgba(47,102,144,0.15);
+  color: var(--usa-dark);
+}
+
+.panel-item-text {
+  min-width: 0;
+}
+.panel-item-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+}
+.panel-item-desc {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+/* BRIDGE STATEMENT */
+.bridge-card {
+  padding: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(135deg, rgba(195,131,63,0.06) 0%, rgba(95,141,122,0.06) 50%, rgba(47,102,144,0.06) 100%);
+  position: relative;
+  overflow: hidden;
+  transition: transform 400ms var(--ease), box-shadow 400ms ease;
+}
+.bridge-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 50px rgba(15,23,42,0.10);
+}
+.bridge-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--india), var(--sage), var(--usa), var(--sage), var(--india));
+  background-size: 200% 100%;
+  animation: bridgeShimmer 6s ease-in-out infinite;
+}
+@keyframes bridgeShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.bridge-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 600ms var(--ease) 200ms, transform 600ms var(--ease) 200ms;
+}
+.bridge-card.visible .bridge-eyebrow { opacity: 1; transform: translateY(0); }
+
+.bridge-title {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  max-width: 700px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms var(--ease) 400ms, transform 700ms var(--ease) 400ms;
+}
+.bridge-card.visible .bridge-title { opacity: 1; transform: translateY(0); }
+.bridge-title .accent-sage { color: var(--sage-dark); }
+
+.bridge-text {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  max-width: 720px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 700ms var(--ease) 600ms, transform 700ms var(--ease) 600ms;
+}
+.bridge-card.visible .bridge-text { opacity: 1; transform: translateY(0); }
+.bridge-text strong { color: var(--ink); font-weight: 700; }
+.bridge-text em {
+  font-style: italic;
+  color: var(--sage-dark);
+}
+
+.bridge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+.bridge-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--ink-soft);
+  letter-spacing: .04em;
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease), background 250ms ease, color 250ms ease;
+  cursor: default;
+}
+.bridge-tag:hover {
+  background: var(--ink);
+  color: white;
+  transform: translateY(-2px) scale(1) !important;
+}
+.bridge-card.visible .bridge-tag { opacity: 1; transform: translateY(0) scale(1); }
+.bridge-card.visible .bridge-tag:nth-child(1) { transition-delay: 900ms; }
+.bridge-card.visible .bridge-tag:nth-child(2) { transition-delay: 980ms; }
+.bridge-card.visible .bridge-tag:nth-child(3) { transition-delay: 1060ms; }
+.bridge-card.visible .bridge-tag:nth-child(4) { transition-delay: 1140ms; }
+.bridge-card.visible .bridge-tag:nth-child(5) { transition-delay: 1220ms; }
+.bridge-card.visible .bridge-tag:nth-child(6) { transition-delay: 1300ms; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .header-stats { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .bar-pair { grid-template-columns: 1fr; gap: 6px; }
+  .bar-cell { height: 28px; }
+}
+
+@media (max-width: 620px) {
+  .page { width: min(100% - 22px, 1120px); padding-top: 14px; }
+  .widget-header { padding: 22px; }
+  .section-band { padding: 22px 16px; }
+  .compare-panel { padding: 20px; }
+  .panel-title { font-size: 19px; }
+  .bridge-card { padding: 22px; }
+  .section-title { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .section-title .sub { max-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas class="blueprint-canvas" aria-hidden="true"></canvas>
+<div class="cursor-light" aria-hidden="true"></div>
+
+<div class="page">
+  <h2 class="sr-only">India vs USA construction comparison — Kashyap Joshi</h2>
+
+  <header class="widget-header">
+    <div class="widget-header-inner">
+      <div class="eyebrow">
+        <span class="eyebrow-line"></span>
+        <span class="eyebrow-text" id="eyebrowText"></span>
+      </div>
+      <h1 class="widget-title">14 months in <span class="accent-india">India</span>. Now coordinating in <span class="accent-usa">the US.</span></h1>
+      <p class="widget-lead">
+        Indian construction taught me to coordinate without BIM &mdash; with 200+ workers, manual scheduling, and direct field judgment. American construction is teaching me how powerful BIM coordination becomes when it's done right. The contrast is my edge.
+      </p>
+
+      <div class="header-stats">
+        <div class="h-stat india"><b data-count="14" data-suffix=" months">0</b><span>India field experience</span></div>
+        <div class="h-stat both"><b>Both</b><span>Sides of construction</span></div>
+        <div class="h-stat usa"><b data-count="6" data-suffix=" months">0</b><span>US co-op (active)</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">01 &middot; Method Comparison</span>
+        <h2>How construction actually gets built &mdash; market by market.</h2>
+      </div>
+      <p class="sub">Bars reflect typical Indian residential/commercial vs. typical US institutional/healthcare construction practices. Not absolute &mdash; just what I've observed.</p>
+    </div>
+
+    <div class="legend-row">
+      <div class="legend-item india"><span class="legend-swatch india"></span>India &middot; what I did</div>
+      <div class="legend-item usa"><span class="legend-swatch usa"></span>USA &middot; what I'm learning</div>
+    </div>
+
+    <div class="bars-grid" id="barsGrid"></div>
+
+    <div class="bar-disclaimer">
+      Note: Values represent my direct experience and observations in Indian residential/commercial construction (2020-2024) vs. current US healthcare and institutional construction. Both markets vary widely by project type, region, and contractor.
+    </div>
+  </section>
+
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">02 &middot; Side by Side</span>
+        <h2>What I did vs. what I'm learning.</h2>
+      </div>
+      <p class="sub">The same project type. Two completely different toolkits. Both have lessons.</p>
+    </div>
+
+    <div class="compare-grid" id="compareGrid"></div>
+  </section>
+
+  <section class="section-band">
+    <div class="bridge-card" id="bridgeCard">
+      <div class="bridge-eyebrow">The Bridge &middot; My Edge</div>
+      <div class="bridge-title">
+        I understand <span class="accent-sage">why</span> digital construction tools matter &mdash; because I've worked without them.
+      </div>
+      <p class="bridge-text">
+        Most candidates learn BIM and Procore in classrooms. They understand <em>how</em> the tools work. I understand <em>why</em> they exist. Having coordinated 200+ workers on Indian job sites with minimal digital tools, then learning US BIM-first, Procore-managed workflows at Northeastern and through my co-op &mdash; I can speak to field crews and BIM managers equally. When a clash detection report flags an MEP conflict, I know what it costs in the field. When a Procore submittal log goes red, I know what the foreman will say. <strong>That translation is my differentiator.</strong>
+      </p>
+      <div class="bridge-tags">
+        <span class="bridge-tag">200+ workers coordinated</span>
+        <span class="bridge-tag">Procore certified</span>
+        <span class="bridge-tag">OSHA 30</span>
+        <span class="bridge-tag">Zero safety incidents</span>
+        <span class="bridge-tag">8 projects delivered</span>
+        <span class="bridge-tag">2 construction markets</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const BARS = [
+  { label: "BIM &amp; digital coordination usage", detail: "Revit, Navisworks adoption", india: 25, usa: 95, indiaVal: "25%", usaVal: "95%" },
+  { label: "Labor workforce size", detail: "Per project at peak", india: 95, usa: 35, indiaVal: "200+", usaVal: "20-50" },
+  { label: "Prefabrication &amp; modular delivery", detail: "Off-site vs on-site build", india: 20, usa: 75, indiaVal: "20%", usaVal: "75%" },
+  { label: "Safety compliance rigor", detail: "OSHA-equivalent enforcement", india: 55, usa: 98, indiaVal: "Moderate", usaVal: "Strict" },
+  { label: "Schedule software (P6, MSP)", detail: "Adoption on real projects", india: 30, usa: 90, indiaVal: "30%", usaVal: "90%" },
+  { label: "Design-build delivery model", detail: "Single-source responsibility", india: 60, usa: 80, indiaVal: "60%", usaVal: "80%" },
+  { label: "Documentation rigor", detail: "RFIs, submittals, change orders", india: 40, usa: 95, indiaVal: "40%", usaVal: "95%" }
+];
+
+const COMP = [
+  {
+    side: "india",
+    eyebrow: "What I did",
+    title: "India &middot; The field-first toolkit",
+    sub: "14 months at JNK Architects in Gujarat. Residential and commercial construction. Direct site delivery, minimal digital systems.",
+    items: [
+      { icon: "W", title: "Labor-intensive coordination", desc: "Coordinated with 200+ workers and 15+ subcontractor trades cumulatively across residential and commercial sites in Ahmedabad." },
+      { icon: "M", title: "Manual scheduling &amp; BOQ", desc: "Excel-based cost control and hand-drawn sequencing &mdash; taught me the first principles of scheduling logic without software dependencies." },
+      { icon: "D", title: "Design-to-build ownership", desc: "Single point of responsibility from design drawings to handing keys to the client. Architect, coordinator, and PM all in one role." },
+      { icon: "S", title: "Real-time field judgment", desc: "RFIs resolved verbally on site. Drawing conflicts caught during walks, not in software. Built strong instinct for what works in the field." }
+    ]
+  },
+  {
+    side: "usa",
+    eyebrow: "What I'm learning",
+    title: "USA &middot; The digital-first toolkit",
+    sub: "Northeastern coursework + active co-op in US healthcare construction. BIM-first, Procore-managed, OSHA-compliant workflows.",
+    items: [
+      { icon: "B", title: "BIM-first coordination", desc: "Revit + Navisworks federation, clash detection, and digital coordination before any physical work begins on site." },
+      { icon: "P", title: "Procore field management", desc: "RFIs, submittals, daily reports, and drawing management through a single platform. Procore PM certified, in daily use at UMass Chan." },
+      { icon: "S", title: "OSHA 30 safety standards", desc: "US safety compliance framework &mdash; JHA, toolbox talks, incident reporting, infection control during construction (ICRA)." },
+      { icon: "C", title: "US construction methods", desc: "Cast-in-place concrete, pre-engineered steel, curtain wall systems, CMU, platform framing &mdash; the building systems that define US institutional work." }
+    ]
+  }
+];
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = window.matchMedia("(hover: none)").matches;
+const isSmallScreen = window.innerWidth < 768;
+
+// Typewriter effect for eyebrow
+const eyebrowText = "Two-Country Perspective";
+const eyebrowEl = document.getElementById("eyebrowText");
+if (reduceMotion) {
+  eyebrowEl.textContent = eyebrowText;
+  eyebrowEl.classList.add("done");
+} else {
+  let typed = 0;
+  function typeWriter() {
+    if (typed <= eyebrowText.length) {
+      eyebrowEl.textContent = eyebrowText.substring(0, typed);
+      typed++;
+      setTimeout(typeWriter, 55);
+    } else {
+      setTimeout(() => eyebrowEl.classList.add("done"), 1200);
+    }
+  }
+  setTimeout(typeWriter, 300);
+}
+
+// Render bars
+document.getElementById("barsGrid").innerHTML = BARS.map((b, i) => `
+  <div class="bar-row" data-index="${i}">
+    <div class="bar-label">
+      <div class="bar-label-name">${b.label}</div>
+      <div class="bar-label-detail">${b.detail}</div>
+    </div>
+    <div class="bar-pair">
+      <div class="bar-cell india">
+        <div class="bar-fill" style="--fill:${b.india}%">
+          <span class="bar-value-label">${b.indiaVal}</span>
+        </div>
+      </div>
+      <div class="bar-cell usa">
+        <div class="bar-fill" style="--fill:${b.usa}%">
+          <span class="bar-value-label">${b.usaVal}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+`).join("");
+
+// Render comparison panels
+document.getElementById("compareGrid").innerHTML = COMP.map(c => `
+  <div class="compare-panel ${c.side}">
+    <div class="panel-eyebrow">${c.eyebrow}</div>
+    <div class="panel-title">${c.title}</div>
+    <div class="panel-sub">${c.sub}</div>
+    <div class="panel-items">
+      ${c.items.map(item => `
+        <div class="panel-item">
+          <div class="panel-item-icon">${item.icon}</div>
+          <div class="panel-item-text">
+            <div class="panel-item-title">${item.title}</div>
+            <div class="panel-item-desc">${item.desc}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </div>
+`).join("");
+
+// Intersection observers
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    
+    if (entry.target.classList.contains("bar-row")) {
+      const idx = parseInt(entry.target.dataset.index);
+      setTimeout(() => entry.target.classList.add("visible"), reduceMotion ? 0 : idx * 130);
+    } else if (entry.target.classList.contains("compare-panel")) {
+      entry.target.classList.add("visible");
+    } else if (entry.target.classList.contains("section-band")) {
+      entry.target.classList.add("visible");
+    } else if (entry.target.id === "bridgeCard") {
+      entry.target.classList.add("visible");
+    }
+    
+    observer.unobserve(entry.target);
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".bar-row, .compare-panel, .section-band, #bridgeCard").forEach(el => observer.observe(el));
+
+// Animated number counters
+function animateCount(el) {
+  const target = Number(el.dataset.count || 0);
+  const suffix = el.dataset.suffix || "";
+  const duration = reduceMotion ? 1 : 1600;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(eased * target);
+    el.textContent = value + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const metricObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll("[data-count]").forEach(animateCount);
+    metricObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll(".header-stats").forEach(el => metricObserver.observe(el));
+
+// 3D tilt on compare panels and bridge card
+if (!isTouch && !reduceMotion) {
+  document.querySelectorAll(".compare-panel, .bridge-card").forEach(card => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(1000px) rotateX(${y * -2}deg) rotateY(${x * 2.5}deg) translateY(-3px)`;
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
+
+// Cursor light
+if (!isTouch && !reduceMotion) {
+  const light = document.querySelector(".cursor-light");
+  window.addEventListener("pointermove", (e) => {
+    light.style.opacity = "1";
+    light.style.left = `${e.clientX}px`;
+    light.style.top = `${e.clientY}px`;
+  });
+}
+
+// Blueprint canvas
+if (!isSmallScreen && !isTouch && !reduceMotion) {
+  const canvas = document.querySelector(".blueprint-canvas");
+  const ctx = canvas.getContext("2d");
+  let points = [];
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * ratio);
+    canvas.height = Math.floor(innerHeight * ratio);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    points = Array.from({ length: Math.max(20, Math.floor(innerWidth / 42)) }, () => ({
+      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+      vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32
+    }));
+  }
+  function drawBlueprint() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.lineWidth = 1;
+    points.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20 || p.x > innerWidth + 20) p.vx *= -1;
+      if (p.y < -20 || p.y > innerHeight + 20) p.vy *= -1;
+      for (let j = i + 1; j < points.length; j++) {
+        const q = points[j];
+        const dx = p.x - q.x; const dy = p.y - q.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 155) {
+          ctx.strokeStyle = `rgba(47,102,144,${(1 - dist / 155) * 0.18})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "rgba(47,102,144,0.22)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(drawBlueprint);
+  }
+  resizeCanvas();
+  drawBlueprint();
+  window.addEventListener("resize", resizeCanvas);
+} else {
+  document.querySelector(".blueprint-canvas").style.display = "none";
+}
+</script>
+</body>
+</html>
