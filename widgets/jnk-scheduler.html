@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JNK Portfolio Scheduler — Kashyap Joshi</title>
+<meta name="description" content="Interactive project scheduling and cost dashboard for projects delivered at JNK Architects, Gujarat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111827;
+  --ink-soft: #475569;
+  --ink-muted: #7c8796;
+  --paper: #fbfcfd;
+  --panel: rgba(255,255,255,0.86);
+  --line: rgba(30,41,59,0.12);
+  --line-strong: rgba(30,41,59,0.22);
+  --sage: #5f8d7a;
+  --sage-dark: #3f6a59;
+  --steel: #2f6690;
+  --steel-dark: #1f4d70;
+  --amber: #c3833f;
+  --brick: #a64b43;
+  --violet: #6860a8;
+  --phase-design: #2f6690;
+  --phase-pre: #5f8d7a;
+  --phase-const: #c3833f;
+  --phase-close: #6860a8;
+  --shadow: 0 18px 55px rgba(15,23,42,0.11);
+  --shadow-soft: 0 8px 28px rgba(15,23,42,0.08);
+  --radius: 8px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(47,102,144,0.18), transparent 30rem),
+    radial-gradient(circle at 82% 14%, rgba(95,141,122,0.18), transparent 32rem),
+    linear-gradient(180deg, #eef3f5 0%, #fbfcfd 36%, #f7f4ee 100%);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: -3;
+  background-image:
+    linear-gradient(rgba(47,102,144,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,102,144,0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 78%);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap;
+}
+
+.blueprint-canvas {
+  position: fixed; inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.cursor-light {
+  position: fixed; left: 0; top: 0;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(circle, rgba(200,131,63,0.16), rgba(95,141,122,0.08) 38%, transparent 70%);
+  transition: opacity 300ms ease;
+}
+
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
+
+/* HEADER */
+.widget-header {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4vw, 48px);
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.widget-header::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px),
+    linear-gradient(transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+}
+.widget-header-inner { position: relative; z-index: 1; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--steel);
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 22px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 900ms var(--ease) 100ms forwards;
+}
+.eyebrow::before {
+  content: ""; width: 32px; height: 2px; background: var(--amber);
+  display: inline-block;
+}
+
+.widget-title {
+  font-size: clamp(34px, 5.5vw, 56px);
+  line-height: 1;
+  font-weight: 880;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+  max-width: 800px;
+  opacity: 0; transform: translateY(30px);
+  animation: fadeUp 1000ms var(--ease) 250ms forwards;
+}
+.widget-title .accent { color: var(--steel-dark); }
+
+.widget-lead {
+  max-width: 720px;
+  color: var(--ink-soft);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.7;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 1000ms var(--ease) 400ms forwards;
+}
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* PORTFOLIO STATS */
+.portfolio-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+}
+.p-stat {
+  padding: 16px;
+  border: 1px solid rgba(30,41,59,0.11);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.64);
+  opacity: 0; transform: translateY(18px);
+  animation: riseIn 760ms var(--ease) forwards;
+  transition: transform 350ms var(--ease), box-shadow 350ms ease;
+}
+.p-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+}
+.p-stat:nth-child(1) { animation-delay: 600ms; }
+.p-stat:nth-child(2) { animation-delay: 700ms; }
+.p-stat:nth-child(3) { animation-delay: 800ms; }
+.p-stat:nth-child(4) { animation-delay: 900ms; }
+.p-stat b {
+  display: block;
+  color: var(--steel-dark);
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.p-stat span {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+@keyframes riseIn { to { transform: translateY(0); opacity: 1; } }
+
+/* SECTION */
+.section-band {
+  padding: clamp(28px, 4vw, 44px);
+  margin-bottom: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.section-title h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.section-title .sub {
+  max-width: 380px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* PROJECT TABS */
+.proj-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 22px;
+  padding: 6px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.proj-tabs::-webkit-scrollbar { display: none; }
+
+.proj-tab {
+  flex: 1;
+  min-width: max-content;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border-radius: 6px;
+  transition: all 280ms var(--ease);
+  white-space: nowrap;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.proj-tab:hover { color: var(--ink); background: rgba(47,102,144,0.06); }
+.proj-tab.active {
+  background: var(--ink);
+  color: white;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.18);
+}
+.proj-tab-num {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: .12em;
+  opacity: .85;
+}
+.proj-tab.active .proj-tab-num { color: rgba(255,255,255,.7); }
+.proj-tab-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* PROJECT META CARDS */
+.meta-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.meta-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(47,102,144,0.04);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: metaIn 500ms var(--ease) forwards;
+}
+.meta-card:nth-child(1) { animation-delay: 100ms; }
+.meta-card:nth-child(2) { animation-delay: 180ms; }
+.meta-card:nth-child(3) { animation-delay: 260ms; }
+.meta-card:nth-child(4) { animation-delay: 340ms; }
+@keyframes metaIn { to { opacity: 1; transform: translateY(0); } }
+
+.meta-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--steel);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.meta-value {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.meta-value.compact { font-size: 14px; }
+
+/* VIEW SWITCHER */
+.view-switcher {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 22px;
+  padding: 5px;
+  background: rgba(47,102,144,0.04);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.view-switcher::-webkit-scrollbar { display: none; }
+.view-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border-radius: 5px;
+  transition: all 250ms var(--ease);
+  white-space: nowrap;
+}
+.view-btn:hover { color: var(--ink); }
+.view-btn.active {
+  background: white;
+  color: var(--steel-dark);
+  box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+}
+
+/* VIEW PANES */
+.view-pane {
+  display: none;
+  animation: paneIn 500ms var(--ease);
+}
+.view-pane.active { display: block; }
+@keyframes paneIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* GANTT CHART */
+.gantt-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  overflow: hidden;
+}
+
+.gantt-legend {
+  display: flex;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(47,102,144,0.03);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+}
+.legend-dot {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+}
+.legend-dot.design { background: var(--phase-design); }
+.legend-dot.pre { background: var(--phase-pre); }
+.legend-dot.const { background: var(--phase-const); }
+.legend-dot.close { background: var(--phase-close); }
+
+.gantt-rows {
+  display: grid;
+  gap: 0;
+}
+
+.gantt-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 90px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(30,41,59,0.06);
+  transition: background 250ms ease;
+}
+.gantt-row:last-child { border-bottom: none; }
+.gantt-row:hover { background: rgba(47,102,144,0.03); }
+
+.gantt-task {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.gantt-task-sub {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.gantt-track {
+  position: relative;
+  height: 28px;
+  background: rgba(30,41,59,0.04);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gantt-bar {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 3px;
+  width: 0;
+  opacity: 0;
+  transition: width 1200ms var(--ease), opacity 600ms var(--ease);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  overflow: hidden;
+}
+.gantt-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+.gantt-bar.animate::after {
+  animation: gShimmer 2.4s var(--ease) 1.4s 1 forwards;
+}
+@keyframes gShimmer {
+  to { transform: translateX(100%); }
+}
+.gantt-bar.animate { opacity: 1; }
+
+.gantt-bar.design { background: linear-gradient(90deg, var(--phase-design), #1f4d70); }
+.gantt-bar.pre { background: linear-gradient(90deg, var(--phase-pre), var(--sage-dark)); }
+.gantt-bar.const { background: linear-gradient(90deg, var(--phase-const), #8e5e25); }
+.gantt-bar.close { background: linear-gradient(90deg, var(--phase-close), #4a4480); }
+
+.gantt-bar-label {
+  color: white;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.gantt-duration {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: right;
+  letter-spacing: .04em;
+}
+
+/* COST BREAKDOWN */
+.cost-table {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  overflow: hidden;
+}
+
+.cost-header {
+  display: grid;
+  grid-template-columns: 1fr 130px 100px 80px;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(47,102,144,0.03);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--steel);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr 130px 100px 80px;
+  gap: 12px;
+  padding: 14px 18px;
+  align-items: center;
+  border-bottom: 1px solid rgba(30,41,59,0.06);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease), background 250ms ease;
+}
+.cost-row.animate { opacity: 1; transform: translateX(0); }
+.cost-row:last-child { border-bottom: none; }
+.cost-row:hover { background: rgba(47,102,144,0.03); }
+
+.cost-item {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.cost-bar-wrap {
+  height: 8px;
+  background: rgba(30,41,59,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cost-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), var(--steel));
+  border-radius: 4px;
+  width: 0;
+  transition: width 1200ms var(--ease);
+}
+.cost-row.animate .cost-bar-fill { width: var(--pct); }
+
+.cost-amount {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
+}
+
+.cost-pct {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.cost-total-row {
+  display: grid;
+  grid-template-columns: 1fr 130px 100px 80px;
+  gap: 12px;
+  padding: 16px 18px;
+  background: rgba(47,102,144,0.06);
+  border-top: 2px solid var(--steel);
+  font-weight: 800;
+}
+.cost-total-row .cost-item {
+  color: var(--steel-dark);
+  font-size: 13px;
+}
+.cost-total-row .cost-amount {
+  color: var(--steel-dark);
+  font-size: 14px;
+}
+
+/* TOOLS VIEW */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.tool-card {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease), border-color 250ms ease;
+}
+.tool-card.animate { opacity: 1; transform: translateY(0); }
+.tool-card:hover { border-color: var(--steel); }
+
+.tool-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.tool-purpose {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+/* OWNERSHIP CALLOUT */
+.ownership-card {
+  margin-top: 22px;
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(95,141,122,0.08), rgba(200,131,63,0.05));
+  border: 1px solid rgba(95,141,122,0.22);
+  border-left: 4px solid var(--sage);
+}
+.ownership-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.ownership-text {
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.ownership-text strong { font-weight: 700; }
+
+/* MOBILE */
+@media (max-width: 920px) {
+  .meta-cards { grid-template-columns: repeat(2, 1fr); }
+  .portfolio-stats { grid-template-columns: repeat(2, 1fr); }
+  .gantt-row { grid-template-columns: 1fr; gap: 8px; }
+  .gantt-duration { text-align: left; }
+  .cost-header, .cost-row, .cost-total-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cost-bar-wrap { grid-column: 1 / -1; }
+  .cost-row.has-bar .cost-bar-wrap { grid-column: 1 / -1; order: 99; }
+  .tools-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .page { width: min(100% - 22px, 1180px); padding-top: 14px; }
+  .widget-header { padding: 22px; }
+  .section-band { padding: 22px 16px; }
+  .proj-tab { padding: 9px 11px; }
+  .proj-tab-name { font-size: 11.5px; }
+  .meta-cards { grid-template-columns: 1fr 1fr; }
+  .gantt-row { padding: 10px 12px; }
+  .cost-header, .cost-row { padding: 10px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas class="blueprint-canvas" aria-hidden="true"></canvas>
+<div class="cursor-light" aria-hidden="true"></div>
+
+<div class="page">
+  <h2 class="sr-only">JNK Architects portfolio scheduler — Kashyap Joshi</h2>
+
+  <header class="widget-header">
+    <div class="widget-header-inner">
+      <div class="eyebrow">Project Management &middot; Real Delivery</div>
+      <h1 class="widget-title">5 projects. 5 schedules. <span class="accent">One PM toolkit.</span></h1>
+      <p class="widget-lead">
+        Real projects delivered during my 14 months at JNK Architects in Gujarat. Click any project to see its schedule breakdown, cost structure, and the tools I used. This is what I actually owned &mdash; documented honestly for a PM lens.
+      </p>
+
+      <div class="portfolio-stats">
+        <div class="p-stat"><b data-count="5">0</b><span>Projects shown</span></div>
+        <div class="p-stat"><b data-count="14" data-suffix=" mo">0</b><span>Total duration</span></div>
+        <div class="p-stat"><b>&#8377;1.6 Cr</b><span>Combined value</span></div>
+        <div class="p-stat"><b data-count="0">0</b><span>Safety incidents</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">01 &middot; Project Portfolio</span>
+        <h2>Pick a project. See the schedule.</h2>
+      </div>
+      <p class="sub">Each project has a Gantt schedule, cost breakdown, and tools I actually used to deliver it.</p>
+    </div>
+
+    <div class="proj-tabs" id="projTabs"></div>
+
+    <div class="meta-cards" id="metaCards"></div>
+
+    <div class="view-switcher" id="viewSwitcher">
+      <button class="view-btn active" data-view="gantt">Gantt schedule</button>
+      <button class="view-btn" data-view="cost">Cost breakdown</button>
+      <button class="view-btn" data-view="tools">Tools used</button>
+    </div>
+
+    <div class="view-pane active" data-pane="gantt">
+      <div class="gantt-wrap">
+        <div class="gantt-legend">
+          <span class="legend-pill"><span class="legend-dot design"></span>Design</span>
+          <span class="legend-pill"><span class="legend-dot pre"></span>Pre-construction</span>
+          <span class="legend-pill"><span class="legend-dot const"></span>Construction</span>
+          <span class="legend-pill"><span class="legend-dot close"></span>Closeout</span>
+        </div>
+        <div class="gantt-rows" id="ganttRows"></div>
+      </div>
+    </div>
+
+    <div class="view-pane" data-pane="cost">
+      <div class="cost-table" id="costTable"></div>
+    </div>
+
+    <div class="view-pane" data-pane="tools">
+      <div class="tools-grid" id="toolsGrid"></div>
+    </div>
+
+    <div class="ownership-card" id="ownershipCard">
+      <div class="ownership-label">What I owned on this project</div>
+      <div class="ownership-text" id="ownershipText"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+// Helpers for INR formatting
+function formatINR(amountInLakh) {
+  if (amountInLakh >= 100) {
+    return "\u20B9" + (amountInLakh / 100).toFixed(2) + " Cr";
+  }
+  return "\u20B9" + amountInLakh.toFixed(1) + " L";
+}
+
+const PROJECTS = {
+  residential: {
+    name: "3BHK Villa",
+    location: "Kuchch, Gujarat",
+    type: "Residential",
+    duration: "8 months",
+    value: 36, // in lakh
+    area: "3,200 sq ft",
+    workforce: "12 workers",
+    phases: [
+      { name: "Design & drawings", sub: "Architectural + structural + client approvals", start: 0, dur: 15, type: "design" },
+      { name: "Site preparation", sub: "Excavation, levelling, boundary wall", start: 15, dur: 8, type: "pre" },
+      { name: "Foundation", sub: "Footings, plinth beam, DPC", start: 20, dur: 12, type: "const" },
+      { name: "Structural framing", sub: "Columns, beams, slabs (G+1)", start: 30, dur: 20, type: "const" },
+      { name: "Masonry & roofing", sub: "Brick walls, sunshade, terrace slab", start: 48, dur: 15, type: "const" },
+      { name: "MEP rough-in", sub: "Electrical conduit, plumbing pipes", start: 58, dur: 10, type: "const" },
+      { name: "Finishes & interiors", sub: "Plaster, tiles, paint, woodwork", start: 65, dur: 18, type: "close" },
+      { name: "Handover", sub: "Snagging, client walkthrough, docs", start: 81, dur: 4, type: "close" }
+    ],
+    cost: [
+      { item: "Earthwork & foundation", amount: 2.5, pct: 7 },
+      { item: "Structural concrete & steel", amount: 8.6, pct: 24 },
+      { item: "Masonry", amount: 4.3, pct: 12 },
+      { item: "Roofing & waterproofing", amount: 2.2, pct: 6 },
+      { item: "MEP (Electrical + Plumbing)", amount: 5.0, pct: 14 },
+      { item: "Plastering & painting", amount: 3.6, pct: 10 },
+      { item: "Flooring & tiling", amount: 4.3, pct: 12 },
+      { item: "Doors, windows & glazing", amount: 2.5, pct: 7 },
+      { item: "Contingency (8%)", amount: 2.9, pct: 8 }
+    ],
+    tools: [
+      { name: "AutoCAD", purpose: "2D working drawings and detailing" },
+      { name: "SketchUp", purpose: "3D massing and client presentations" },
+      { name: "Revit", purpose: "Architectural and structural BIM model" },
+      { name: "MS Project", purpose: "Schedule and milestone tracking" },
+      { name: "Excel", purpose: "BOQ and cost estimation" },
+      { name: "OSHA 30", purpose: "Safety standards applied on site" }
+    ],
+    ownership: "Full design-to-handover ownership. Produced the complete working drawing set, owned the Revit BIM model end-to-end, coordinated subcontractors, and walked the site weekly. This is the project featured in my BIM Showcase widget with the federated 3D model."
+  },
+  commercial: {
+    name: "Commercial Retail Complex",
+    location: "Surat, Gujarat",
+    type: "Commercial",
+    duration: "10 months",
+    value: 48,
+    area: "8,500 sq ft",
+    workforce: "22 workers",
+    phases: [
+      { name: "Design & permits", sub: "Concept, DD, CD, municipal approvals", start: 0, dur: 22, type: "design" },
+      { name: "Site mobilization", sub: "Hoardings, utility relocation, demolition", start: 22, dur: 8, type: "pre" },
+      { name: "Foundation & basement", sub: "Raft foundation, retaining walls", start: 28, dur: 18, type: "const" },
+      { name: "Superstructure", sub: "RCC frame G+2, slab pours", start: 42, dur: 28, type: "const" },
+      { name: "Envelope & glazing", sub: "Front facade, ACP cladding, glass", start: 65, dur: 18, type: "const" },
+      { name: "MEP fit-out", sub: "HVAC, electrical, plumbing, fire", start: 70, dur: 22, type: "const" },
+      { name: "Interior finishes", sub: "Flooring, ceiling, fixtures, signage", start: 85, dur: 18, type: "close" },
+      { name: "Tenant handover", sub: "Snagging, occupancy certificate", start: 100, dur: 5, type: "close" }
+    ],
+    cost: [
+      { item: "Earthwork & foundation", amount: 4.5, pct: 9 },
+      { item: "RCC structure", amount: 12.5, pct: 26 },
+      { item: "Masonry & blockwork", amount: 3.8, pct: 8 },
+      { item: "Facade & glazing", amount: 7.2, pct: 15 },
+      { item: "MEP systems", amount: 9.6, pct: 20 },
+      { item: "Interior finishes", amount: 5.5, pct: 11 },
+      { item: "Fire safety & lifts", amount: 1.9, pct: 4 },
+      { item: "Contingency", amount: 3.0, pct: 7 }
+    ],
+    tools: [
+      { name: "AutoCAD", purpose: "Plans, sections, elevations, RCP" },
+      { name: "Revit", purpose: "Architectural model + structural coordination" },
+      { name: "SketchUp + Lumion", purpose: "Client renders and walkthroughs" },
+      { name: "MS Project", purpose: "Multi-trade schedule tracking" },
+      { name: "Excel", purpose: "BOQ, cost tracking, vendor comparisons" },
+      { name: "WhatsApp + Email", purpose: "Daily field coordination (no Procore in India)" }
+    ],
+    ownership: "Owned design documentation and construction coordination. Supported principal architect on permits and client meetings. Site supervisor on daily coordination with structural, MEP, and finishes trades."
+  },
+  office: {
+    name: "Corporate HQ Office Design",
+    location: "Ahmedabad, Gujarat",
+    type: "Office / Interior",
+    duration: "5 months",
+    value: 22,
+    area: "4,200 sq ft",
+    workforce: "10 workers",
+    phases: [
+      { name: "Concept & space planning", sub: "Programming, workstation planning, branding", start: 0, dur: 12, type: "design" },
+      { name: "DD + client approvals", sub: "Material samples, mood boards", start: 12, dur: 10, type: "design" },
+      { name: "Demolition & shell", sub: "Strip-out, base ceiling, dust barriers", start: 22, dur: 6, type: "pre" },
+      { name: "MEP rough-in", sub: "False ceiling, HVAC ducts, electrical", start: 25, dur: 14, type: "const" },
+      { name: "Partitions & glazing", sub: "Drywall, glass cabins, doors", start: 35, dur: 12, type: "const" },
+      { name: "Flooring & ceiling", sub: "Vinyl, carpet, gypsum ceiling, lighting", start: 42, dur: 14, type: "const" },
+      { name: "Furniture & FF&E", sub: "Workstations, chairs, pantry, signage", start: 55, dur: 12, type: "close" },
+      { name: "Punchlist & handover", sub: "Final cleaning, snags, client walkthrough", start: 65, dur: 5, type: "close" }
+    ],
+    cost: [
+      { item: "Demolition & shell prep", amount: 1.8, pct: 8 },
+      { item: "MEP (HVAC, electrical, low voltage)", amount: 5.5, pct: 25 },
+      { item: "Partitions & glazing", amount: 3.5, pct: 16 },
+      { item: "False ceiling & lighting", amount: 2.4, pct: 11 },
+      { item: "Flooring (vinyl + carpet)", amount: 1.5, pct: 7 },
+      { item: "Furniture & FF&E", amount: 4.8, pct: 22 },
+      { item: "Paint & signage", amount: 1.2, pct: 5 },
+      { item: "Contingency", amount: 1.3, pct: 6 }
+    ],
+    tools: [
+      { name: "Revit + AutoCAD", purpose: "Space planning, RCP, electrical layouts" },
+      { name: "SketchUp + V-Ray", purpose: "Photoreal client presentations" },
+      { name: "MS Project", purpose: "Tight 5-month sequence tracking" },
+      { name: "Excel", purpose: "FF&E procurement schedules and BOQ" },
+      { name: "Photoshop + Illustrator", purpose: "Branding, signage, mood boards" },
+      { name: "OSHA 30", purpose: "Confined-space and dust control on live floor" }
+    ],
+    ownership: "Owned interior design and FF&E coordination. Worked closely with MEP consultants on cabling, HVAC zoning, and acoustic separation between cabins. Daily site supervision during fit-out."
+  },
+  multistory: {
+    name: "Mixed-use Building",
+    location: "Bharuch, Gujarat",
+    type: "Mixed-use (G+4)",
+    duration: "14 months",
+    value: 38,
+    area: "12,000 sq ft",
+    workforce: "30 workers",
+    phases: [
+      { name: "Design & approvals", sub: "G+4 mixed-use, fire NOC, plan sanction", start: 0, dur: 25, type: "design" },
+      { name: "Site mobilization", sub: "Site office, hoardings, utility setup", start: 25, dur: 10, type: "pre" },
+      { name: "Foundation + raft", sub: "Raft + retaining wall, dewatering", start: 32, dur: 22, type: "const" },
+      { name: "Superstructure G+4", sub: "RCC frame, 5 slabs, lift core", start: 50, dur: 45, type: "const" },
+      { name: "Envelope & roofing", sub: "Block walls, plaster, terrace waterproofing", start: 80, dur: 25, type: "const" },
+      { name: "MEP shaft + risers", sub: "Vertical risers, panel boards, fire pump", start: 90, dur: 28, type: "const" },
+      { name: "Floor-by-floor finishes", sub: "Sequential floor handover, finishes per use type", start: 115, dur: 30, type: "close" },
+      { name: "OC + handover", sub: "Occupancy certificate, lift commissioning", start: 140, dur: 8, type: "close" }
+    ],
+    cost: [
+      { item: "Earthwork & foundation", amount: 4.2, pct: 11 },
+      { item: "RCC structure (G+4)", amount: 11.8, pct: 31 },
+      { item: "Masonry & plaster", amount: 4.0, pct: 11 },
+      { item: "Facade & waterproofing", amount: 3.4, pct: 9 },
+      { item: "MEP (incl. lift + fire)", amount: 7.2, pct: 19 },
+      { item: "Floor finishes (mixed)", amount: 3.8, pct: 10 },
+      { item: "Doors, windows, glazing", amount: 1.9, pct: 5 },
+      { item: "Contingency", amount: 1.7, pct: 4 }
+    ],
+    tools: [
+      { name: "Revit", purpose: "G+4 architectural and structural model" },
+      { name: "AutoCAD", purpose: "Detail sheets, working drawings, RCC details" },
+      { name: "MS Project", purpose: "Phase-gate scheduling across 14 months" },
+      { name: "Excel", purpose: "BOQ, cost tracking, contractor billing" },
+      { name: "WhatsApp + Email", purpose: "Daily coordination across 5 trades" },
+      { name: "OSHA 30 principles", purpose: "Height work, scaffolding safety, fall arrest" }
+    ],
+    ownership: "Supported design documentation and floor-by-floor coordination. Reviewed structural and MEP coordination. Walked the site weekly during structural phase. Junior PM role under principal architect."
+  },
+  designbuild: {
+    name: "Industrial Facility",
+    location: "Vadodara, Gujarat",
+    type: "Design-Build / Industrial",
+    duration: "11 months",
+    value: 18,
+    area: "6,500 sq ft",
+    workforce: "18 workers",
+    phases: [
+      { name: "Programming & DBB scope", sub: "Owner requirements, fast-track DBB contract", start: 0, dur: 8, type: "design" },
+      { name: "Concept + design parallel to site prep", sub: "Design issued in packages as site cleared", start: 8, dur: 15, type: "design" },
+      { name: "Site mobilization", sub: "Heavy vehicle access, soil testing", start: 12, dur: 8, type: "pre" },
+      { name: "Foundation (PEB-ready)", sub: "Anchor bolts, footings for steel frame", start: 18, dur: 14, type: "const" },
+      { name: "Pre-engineered steel frame", sub: "Column erection, roof trusses, purlins", start: 30, dur: 20, type: "const" },
+      { name: "Roof + cladding", sub: "Profile sheet, side cladding, gutters", start: 45, dur: 15, type: "const" },
+      { name: "Industrial flooring & MEP", sub: "VDF flooring, lighting, electrical mains", start: 55, dur: 22, type: "const" },
+      { name: "Equipment install + commissioning", sub: "Owner's equipment install, walkthroughs", start: 75, dur: 12, type: "close" }
+    ],
+    cost: [
+      { item: "Earthwork & foundation", amount: 1.6, pct: 9 },
+      { item: "Pre-engineered steel structure", amount: 6.5, pct: 36 },
+      { item: "Roofing & cladding", amount: 2.7, pct: 15 },
+      { item: "Industrial flooring (VDF)", amount: 2.0, pct: 11 },
+      { item: "MEP & electrical mains", amount: 2.9, pct: 16 },
+      { item: "Site development & access", amount: 1.1, pct: 6 },
+      { item: "Doors, windows, ventilators", amount: 0.6, pct: 3 },
+      { item: "Contingency", amount: 0.6, pct: 4 }
+    ],
+    tools: [
+      { name: "AutoCAD + Revit", purpose: "Architectural + PEB coordination drawings" },
+      { name: "MS Project", purpose: "Fast-track DBB schedule" },
+      { name: "Excel", purpose: "Cost tracking and contractor schedule of rates" },
+      { name: "PEB vendor coordination", purpose: "Shop drawing reviews with steel fabricator" },
+      { name: "OSHA 30", purpose: "Heavy lifting, steel erection safety" },
+      { name: "Site logs (manual)", purpose: "Daily progress reports for owner" }
+    ],
+    ownership: "Coordinated design-build delivery. Worked with PEB vendor on shop drawings and erection sequence. Owned schedule recovery decisions during steel delivery delays. First design-build experience &mdash; taught me how fast-track delivery actually works."
+  }
+};
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = window.matchMedia("(hover: none)").matches;
+const isSmallScreen = window.innerWidth < 768;
+
+let activeProject = "residential";
+let activeView = "gantt";
+
+// Render project tabs
+function renderTabs() {
+  const tabs = Object.keys(PROJECTS).map((key, i) => {
+    const p = PROJECTS[key];
+    const num = String(i + 1).padStart(2, "0");
+    return `
+      <button class="proj-tab ${key === activeProject ? 'active' : ''}" data-key="${key}">
+        <span class="proj-tab-num">PROJECT ${num}</span>
+        <span class="proj-tab-name">${p.name}</span>
+      </button>
+    `;
+  }).join("");
+  document.getElementById("projTabs").innerHTML = tabs;
+  document.querySelectorAll(".proj-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeProject = btn.dataset.key;
+      renderTabs();
+      renderProject();
+    });
+  });
+}
+
+// Render meta cards
+function renderMeta(p) {
+  document.getElementById("metaCards").innerHTML = `
+    <div class="meta-card"><div class="meta-label">Duration</div><div class="meta-value">${p.duration}</div></div>
+    <div class="meta-card"><div class="meta-label">Project value</div><div class="meta-value">${formatINR(p.value)}</div></div>
+    <div class="meta-card"><div class="meta-label">Total area</div><div class="meta-value compact">${p.area}</div></div>
+    <div class="meta-card"><div class="meta-label">Workforce</div><div class="meta-value">${p.workforce}</div></div>
+  `;
+}
+
+// Render Gantt
+function renderGantt(p) {
+  const totalDays = Math.max(...p.phases.map(ph => ph.start + ph.dur));
+  const rows = p.phases.map((ph, i) => {
+    const left = (ph.start / totalDays) * 100;
+    const width = (ph.dur / totalDays) * 100;
+    return `
+      <div class="gantt-row" data-index="${i}">
+        <div>
+          <div class="gantt-task">${ph.name}</div>
+          <div class="gantt-task-sub">${ph.sub}</div>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-bar ${ph.type}" style="left:${left}%;width:${width}%" data-target-width="${width}">
+            <span class="gantt-bar-label">${ph.dur} weeks</span>
+          </div>
+        </div>
+        <div class="gantt-duration">${ph.dur} weeks</div>
+      </div>
+    `;
+  }).join("");
+  document.getElementById("ganttRows").innerHTML = rows;
+  
+  // Animate bars in
+  setTimeout(() => {
+    document.querySelectorAll(".gantt-bar").forEach((bar, i) => {
+      setTimeout(() => bar.classList.add("animate"), reduceMotion ? 0 : i * 100);
+    });
+  }, 100);
+}
+
+// Render Cost
+function renderCost(p) {
+  const total = p.cost.reduce((s, c) => s + c.amount, 0);
+  const totalPct = p.cost.reduce((s, c) => s + c.pct, 0);
+  const header = `
+    <div class="cost-header">
+      <div>Line item</div>
+      <div>Share</div>
+      <div>Amount</div>
+      <div>%</div>
+    </div>
+  `;
+  const rows = p.cost.map((c, i) => `
+    <div class="cost-row has-bar" data-index="${i}">
+      <div class="cost-item">${c.item}</div>
+      <div class="cost-bar-wrap"><div class="cost-bar-fill" style="--pct:${c.pct}%"></div></div>
+      <div class="cost-amount">${formatINR(c.amount)}</div>
+      <div class="cost-pct">${c.pct}%</div>
+    </div>
+  `).join("");
+  const totalRow = `
+    <div class="cost-total-row">
+      <div class="cost-item">Total project cost</div>
+      <div></div>
+      <div class="cost-amount">${formatINR(total)}</div>
+      <div class="cost-pct">${totalPct}%</div>
+    </div>
+  `;
+  document.getElementById("costTable").innerHTML = header + rows + totalRow;
+  
+  setTimeout(() => {
+    document.querySelectorAll(".cost-row").forEach((row, i) => {
+      setTimeout(() => row.classList.add("animate"), reduceMotion ? 0 : i * 80);
+    });
+  }, 100);
+}
+
+// Render Tools
+function renderTools(p) {
+  document.getElementById("toolsGrid").innerHTML = p.tools.map((t, i) => `
+    <div class="tool-card" data-index="${i}">
+      <div class="tool-name">${t.name}</div>
+      <div class="tool-purpose">${t.purpose}</div>
+    </div>
+  `).join("");
+  
+  setTimeout(() => {
+    document.querySelectorAll(".tool-card").forEach((card, i) => {
+      setTimeout(() => card.classList.add("animate"), reduceMotion ? 0 : i * 70);
+    });
+  }, 100);
+}
+
+// Render ownership
+function renderOwnership(p) {
+  document.getElementById("ownershipText").innerHTML = p.ownership;
+}
+
+// Render whole project
+function renderProject() {
+  const p = PROJECTS[activeProject];
+  renderMeta(p);
+  
+  // Always re-render the active pane
+  if (activeView === "gantt") renderGantt(p);
+  else if (activeView === "cost") renderCost(p);
+  else if (activeView === "tools") renderTools(p);
+  
+  // Pre-render all panes for smooth switching
+  if (activeView !== "gantt") renderGantt(p);
+  if (activeView !== "cost") renderCost(p);
+  if (activeView !== "tools") renderTools(p);
+  
+  renderOwnership(p);
+}
+
+// View switcher
+document.querySelectorAll(".view-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.view;
+    activeView = target;
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".view-pane").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelector(`.view-pane[data-pane="${target}"]`).classList.add("active");
+    
+    // Re-trigger animations for the active pane
+    const p = PROJECTS[activeProject];
+    if (target === "gantt") renderGantt(p);
+    else if (target === "cost") renderCost(p);
+    else if (target === "tools") renderTools(p);
+  });
+});
+
+// Animated counters
+function animateCount(el) {
+  const target = Number(el.dataset.count || 0);
+  const suffix = el.dataset.suffix || "";
+  const duration = reduceMotion ? 1 : 1500;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(eased * target);
+    el.textContent = value + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const metricObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll("[data-count]").forEach(animateCount);
+    metricObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll(".portfolio-stats").forEach(el => metricObserver.observe(el));
+
+// Cursor light
+if (!isTouch && !reduceMotion) {
+  const light = document.querySelector(".cursor-light");
+  window.addEventListener("pointermove", (e) => {
+    light.style.opacity = "1";
+    light.style.left = `${e.clientX}px`;
+    light.style.top = `${e.clientY}px`;
+  });
+}
+
+// Blueprint canvas
+if (!isSmallScreen && !isTouch && !reduceMotion) {
+  const canvas = document.querySelector(".blueprint-canvas");
+  const ctx = canvas.getContext("2d");
+  let points = [];
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * ratio);
+    canvas.height = Math.floor(innerHeight * ratio);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    points = Array.from({ length: Math.max(20, Math.floor(innerWidth / 42)) }, () => ({
+      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+      vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32
+    }));
+  }
+  function drawBlueprint() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.lineWidth = 1;
+    points.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20 || p.x > innerWidth + 20) p.vx *= -1;
+      if (p.y < -20 || p.y > innerHeight + 20) p.vy *= -1;
+      for (let j = i + 1; j < points.length; j++) {
+        const q = points[j];
+        const dx = p.x - q.x; const dy = p.y - q.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 155) {
+          ctx.strokeStyle = `rgba(47,102,144,${(1 - dist / 155) * 0.18})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "rgba(47,102,144,0.22)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(drawBlueprint);
+  }
+  resizeCanvas();
+  drawBlueprint();
+  window.addEventListener("resize", resizeCanvas);
+} else {
+  document.querySelector(".blueprint-canvas").style.display = "none";
+}
+
+// Initial render
+renderTabs();
+renderProject();
+</script>
+</body>
+</html>
