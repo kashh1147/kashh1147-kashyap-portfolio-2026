@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIM/VDC Showcase — Kashyap Joshi</title>
+<meta name="description" content="BIM coordination case studies — JNK Bungalow Revit ownership, Hong Kong multi-discipline clash detection, BrightSource Monte Carlo risk analysis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111827;
+  --ink-soft: #475569;
+  --ink-muted: #7c8796;
+  --paper: #fbfcfd;
+  --panel: rgba(255,255,255,0.86);
+  --line: rgba(30,41,59,0.12);
+  --line-strong: rgba(30,41,59,0.22);
+  --sage: #5f8d7a;
+  --sage-dark: #3f6a59;
+  --steel: #2f6690;
+  --steel-dark: #1f4d70;
+  --amber: #c3833f;
+  --brick: #a64b43;
+  --violet: #6860a8;
+  --shadow: 0 18px 55px rgba(15,23,42,0.11);
+  --shadow-soft: 0 8px 28px rgba(15,23,42,0.08);
+  --radius: 8px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(47,102,144,0.18), transparent 30rem),
+    radial-gradient(circle at 82% 14%, rgba(95,141,122,0.18), transparent 32rem),
+    linear-gradient(180deg, #eef3f5 0%, #fbfcfd 36%, #f7f4ee 100%);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background-image:
+    linear-gradient(rgba(47,102,144,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,102,144,0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 78%);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap;
+}
+
+.blueprint-canvas {
+  position: fixed; inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.cursor-light {
+  position: fixed; left: 0; top: 0;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(circle, rgba(200,131,63,0.16), rgba(95,141,122,0.08) 38%, transparent 70%);
+  transition: opacity 300ms ease;
+}
+
+.page {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
+
+/* ============ HEADER ============ */
+.widget-header {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4vw, 48px);
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.widget-header::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px),
+    linear-gradient(transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+}
+.widget-header-inner { position: relative; z-index: 1; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--steel);
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 22px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 900ms var(--ease) 100ms forwards;
+}
+.eyebrow::before {
+  content: ""; width: 32px; height: 2px; background: var(--amber);
+}
+
+.widget-title {
+  font-size: clamp(34px, 5.5vw, 56px);
+  line-height: 1;
+  font-weight: 880;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+  max-width: 800px;
+  opacity: 0; transform: translateY(30px);
+  animation: fadeUp 1000ms var(--ease) 250ms forwards;
+}
+
+.widget-lead {
+  max-width: 720px;
+  color: var(--ink-soft);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.7;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 1000ms var(--ease) 400ms forwards;
+}
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* ============ HEADER STATS ============ */
+.header-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+}
+.h-stat {
+  padding: 16px;
+  border: 1px solid rgba(30,41,59,0.11);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.64);
+  opacity: 0; transform: translateY(18px);
+  animation: riseIn 760ms var(--ease) forwards;
+}
+.h-stat:nth-child(1) { animation-delay: 500ms; }
+.h-stat:nth-child(2) { animation-delay: 600ms; }
+.h-stat:nth-child(3) { animation-delay: 700ms; }
+.h-stat:nth-child(4) { animation-delay: 800ms; }
+.h-stat b {
+  display: block;
+  color: var(--steel);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+}
+.h-stat span {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+@keyframes riseIn { to { transform: translateY(0); opacity: 1; } }
+
+/* ============ SECTION BANDS ============ */
+.section-band {
+  padding: clamp(28px, 4vw, 44px);
+  margin-bottom: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.section-title h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.section-title .sub {
+  max-width: 380px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ============ WORKFLOW (8 steps) ============ */
+.workflow-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.workflow-step {
+  position: relative;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.72);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease), box-shadow 260ms ease, border-color 260ms ease;
+}
+.workflow-step.visible { opacity: 1; transform: translateY(0); }
+.workflow-step:hover {
+  border-color: var(--steel);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-4px);
+}
+.workflow-step.is-open {
+  border-color: var(--steel);
+  background: rgba(47,102,144,0.04);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.12);
+}
+
+.ws-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: .12em;
+  margin-bottom: 8px;
+}
+.ws-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.ws-short {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  line-height: 1.55;
+}
+
+.workflow-detail-panel {
+  grid-column: 1 / -1;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 600ms var(--ease);
+}
+.workflow-detail-panel.is-visible { max-height: 600px; }
+.wdp-inner {
+  margin-top: 14px;
+  padding: 22px 24px;
+  border: 1px solid var(--steel);
+  border-left: 4px solid var(--steel);
+  border-radius: var(--radius);
+  background: white;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 500ms var(--ease) 200ms, transform 500ms var(--ease) 200ms;
+}
+.workflow-detail-panel.is-visible .wdp-inner {
+  opacity: 1; transform: translateY(0);
+}
+.wdp-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--steel-dark);
+  margin-bottom: 10px;
+}
+.wdp-desc {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+.wdp-tools {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.wdp-tool {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  background: rgba(47,102,144,0.08);
+  border: 1px solid rgba(47,102,144,0.22);
+  border-radius: 4px;
+  color: var(--steel);
+}
+
+/* ============ TABBED CASE STUDIES ============ */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 6px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  flex: 1;
+  min-width: max-content;
+  padding: 12px 18px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border-radius: 6px;
+  transition: all 280ms var(--ease);
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--ink); background: rgba(47,102,144,0.06); }
+.tab-btn.active {
+  background: var(--ink);
+  color: white;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.18);
+}
+.tab-btn .tab-num {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--amber);
+  margin-right: 7px;
+  opacity: .8;
+}
+.tab-btn.active .tab-num { color: rgba(255,255,255,.7); }
+
+.tab-panel {
+  display: none;
+  animation: tabIn 500ms var(--ease);
+}
+.tab-panel.active { display: block; }
+@keyframes tabIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Case study layout === */
+.case-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.case-meta {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.72);
+  padding: 22px;
+}
+.case-meta-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .12em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.case-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.case-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+.case-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.case-info {
+  padding: 12px;
+  background: rgba(47,102,144,0.04);
+  border: 1px solid rgba(47,102,144,0.12);
+  border-radius: 6px;
+}
+.case-info-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.case-info-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.case-description {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+.case-description strong { color: var(--ink); font-weight: 700; }
+
+.case-list-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--steel);
+  letter-spacing: .14em;
+  margin-bottom: 10px;
+  margin-top: 18px;
+  text-transform: uppercase;
+}
+.case-list {
+  list-style: none; padding: 0;
+}
+.case-list li {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  padding-left: 20px;
+  position: relative;
+  margin-bottom: 7px;
+}
+.case-list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 9px;
+  width: 11px; height: 2px;
+  background: var(--sage);
+  border-radius: 2px;
+}
+.case-list li strong { color: var(--ink); font-weight: 700; }
+
+.case-callout {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(95,141,122,0.08), rgba(200,131,63,0.05));
+  border: 1px solid rgba(95,141,122,0.22);
+  border-radius: var(--radius);
+}
+.case-callout-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  letter-spacing: .14em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.case-callout-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* === Image gallery in case === */
+.case-gallery {
+  display: grid;
+  gap: 12px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.gallery-grid.single-col { grid-template-columns: 1fr; }
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 4/3;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  cursor: pointer;
+  transition: all 320ms var(--ease);
+}
+.gallery-item:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--steel);
+}
+.gallery-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Placeholder styling */
+.placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px;
+  background:
+    repeating-linear-gradient(45deg, rgba(47,102,144,0.04) 0 1px, transparent 1px 14px),
+    linear-gradient(135deg, #f8fafc 0%, #e9eef3 100%);
+  position: relative;
+}
+.placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1.5px dashed rgba(47,102,144,0.32);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.ph-tag {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  background: var(--amber);
+  color: white;
+  border-radius: 3px;
+  letter-spacing: .1em;
+  z-index: 2;
+}
+.ph-icon {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: rgba(47,102,144,0.4);
+  margin-top: 8px;
+  z-index: 1;
+}
+.ph-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--steel-dark);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+.ph-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 3px;
+  line-height: 1.3;
+  z-index: 1;
+}
+.ph-file {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink-muted);
+  margin-top: 6px;
+  word-break: break-all;
+  z-index: 1;
+}
+
+.gallery-note {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  letter-spacing: .04em;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(47,102,144,0.04);
+  border-left: 3px solid var(--steel);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ============ TOOLS SECTION ============ */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.tool-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.72);
+  opacity: 0;
+  transform: translateY(18px) rotateX(8deg);
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease), box-shadow 260ms ease;
+}
+.tool-card.visible {
+  opacity: 1; transform: translateY(0) rotateX(0);
+}
+.tool-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-soft);
+}
+.tool-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+.tool-icon {
+  width: 38px; height: 38px;
+  border-radius: 6px;
+  display: grid; place-items: center;
+  font-family: var(--mono);
+  font-size: 12px; font-weight: 800;
+  color: white;
+}
+.tool-name {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.tool-prof {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.tool-desc {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+.tool-bar {
+  height: 5px;
+  background: rgba(47,102,144,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.tool-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), var(--steel));
+  border-radius: 3px;
+  width: 0;
+  transition: width 1200ms var(--ease);
+}
+.tool-card.visible .tool-bar-fill {
+  width: var(--fill);
+}
+
+/* ============ HONEST STATEMENT ============ */
+.honesty-card {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--amber);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(200,131,63,0.06), rgba(255,255,255,0.86));
+}
+.honesty-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: .14em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.honesty-text {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.75;
+}
+.honesty-text strong { color: var(--steel-dark); font-weight: 700; }
+
+/* ============ MOBILE ============ */
+@media (max-width: 920px) {
+  .header-stats { grid-template-columns: repeat(2, 1fr); }
+  .workflow-track { grid-template-columns: repeat(2, 1fr); }
+  .case-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .page { width: min(100% - 22px, 1120px); padding-top: 14px; }
+  .section-band { padding: 22px 16px; }
+  .widget-header { padding: 22px; }
+  .header-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .h-stat { padding: 12px; }
+  .h-stat b { font-size: 24px; }
+  .workflow-track { grid-template-columns: 1fr; }
+  .case-info-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .section-title { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .section-title .sub { max-width: 100%; }
+  .tab-btn { padding: 10px 14px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas class="blueprint-canvas" aria-hidden="true"></canvas>
+<div class="cursor-light" aria-hidden="true"></div>
+
+<div class="page">
+  <h2 class="sr-only">BIM/VDC showcase — Kashyap Joshi project case studies</h2>
+
+  <!-- HEADER -->
+  <header class="widget-header">
+    <div class="widget-header-inner">
+      <div class="eyebrow">BIM · VDC · Digital Construction</div>
+      <h1 class="widget-title">Three projects. Three proof points. <span style="color: var(--steel-dark)">Real BIM/VDC work.</span></h1>
+      <p class="widget-lead">
+        From full Revit ownership on a residential bungalow, to multi-discipline clash detection on an international commercial project, to 10,000-iteration quantitative risk modeling — this is the digital construction work I can actually defend in an interview.
+      </p>
+
+      <div class="header-stats">
+        <div class="h-stat"><b data-count="3">0</b><span>BIM case studies</span></div>
+        <div class="h-stat"><b data-count="4">0</b><span>Clash tests run</span></div>
+        <div class="h-stat"><b data-count="10000" data-suffix="">0</b><span>Monte Carlo iterations</span></div>
+        <div class="h-stat"><b data-count="300" data-prefix="LOD ">0</b><span>Detail level reached</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION 01 — 8-STEP WORKFLOW -->
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">01 · The Process</span>
+        <h2>An 8-step VDC coordination workflow.</h2>
+      </div>
+      <p class="sub">From BIM Execution Plan to as-built handover. Click any step to see what it involves and the tools used.</p>
+    </div>
+
+    <div class="workflow-track" id="workflowTrack"></div>
+  </section>
+
+  <!-- SECTION 02 — CASE STUDIES (TABBED) -->
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">02 · Case Studies</span>
+        <h2>Three projects I can show you.</h2>
+      </div>
+      <p class="sub">Honest scope. Real screenshots coming. Defensible claims you can stress-test in interview.</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="bungalow"><span class="tab-num">01</span>JNK Bungalow</button>
+      <button class="tab-btn" data-tab="hongkong"><span class="tab-num">02</span>Hong Kong Commercial</button>
+      <button class="tab-btn" data-tab="brightsource"><span class="tab-num">03</span>BrightSource Risk Analysis</button>
+    </div>
+
+    <!-- TAB 1: JNK BUNGALOW -->
+    <div class="tab-panel active" data-panel="bungalow">
+      <div class="case-grid">
+        <div class="case-meta">
+          <div class="case-meta-title">Case Study 01</div>
+          <div class="case-title">JNK Residential Bungalow</div>
+          <div class="case-sub">Full Revit ownership · Gujarat, India · 2024</div>
+
+          <div class="case-info-grid">
+            <div class="case-info"><div class="case-info-label">Type</div><div class="case-info-value">Residential</div></div>
+            <div class="case-info"><div class="case-info-label">LOD</div><div class="case-info-value">300</div></div>
+            <div class="case-info"><div class="case-info-label">Disciplines</div><div class="case-info-value">ARC + STR</div></div>
+            <div class="case-info"><div class="case-info-label">Status</div><div class="case-info-value">Constructed</div></div>
+          </div>
+
+          <div class="case-description">
+            <strong>Architectural + structural Revit model</strong> for a residential bungalow that broke ground in Gujarat. Federated and clash-tested in Navisworks. Full construction documentation set — plans, sections, schedules, and details. <strong>The one project where I owned the BIM model end-to-end</strong> and have permission to show every detail.
+          </div>
+
+          <div class="case-list-label">What's in the deliverable</div>
+          <ul class="case-list">
+            <li><strong>3D federated model</strong> — architecture + structure</li>
+            <li><strong>Floor plans</strong> with full dimensioning</li>
+            <li><strong>Section cuts</strong> with annotations</li>
+            <li><strong>Schedules</strong> — doors, windows, materials</li>
+            <li><strong>Sheet sets</strong> with title blocks</li>
+            <li><strong>Wall section details</strong> at LOD 300+</li>
+            <li><strong>Clash test</strong> ARC vs STR in Navisworks</li>
+          </ul>
+
+          <div class="case-callout">
+            <div class="case-callout-label">Why this proof point matters</div>
+            <div class="case-callout-text">
+              Most academic BIM work stops at the model. This one was built for an actual project that broke ground. Every detail had to be buildable — not just renderable.
+            </div>
+          </div>
+        </div>
+
+        <div class="case-gallery">
+          <div class="gallery-note">Image gallery — replace placeholders by uploading files to <strong>/assets/images/bim/</strong> with these exact names.</div>
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⎚</div>
+                  <div class="ph-label">Revit · 3D Isometric</div>
+                  <div class="ph-name">Federated model view</div>
+                </div>
+                <div class="ph-file">revit-bungalow-3d.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">▭</div>
+                  <div class="ph-label">Revit · Floor Plan</div>
+                  <div class="ph-name">Ground floor with dimensions</div>
+                </div>
+                <div class="ph-file">revit-bungalow-plan.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⌐</div>
+                  <div class="ph-label">Revit · Section</div>
+                  <div class="ph-name">Vertical section cut</div>
+                </div>
+                <div class="ph-file">revit-bungalow-section.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">▤</div>
+                  <div class="ph-label">Revit · Schedule</div>
+                  <div class="ph-name">Door/window schedule</div>
+                </div>
+                <div class="ph-file">revit-bungalow-schedule.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">▣</div>
+                  <div class="ph-label">Revit · Sheet</div>
+                  <div class="ph-name">Drawing sheet w/ titleblock</div>
+                </div>
+                <div class="ph-file">revit-bungalow-sheet.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⌗</div>
+                  <div class="ph-label">Revit · Detail</div>
+                  <div class="ph-name">Wall section detail (LOD 300)</div>
+                </div>
+                <div class="ph-file">revit-bungalow-detail.png</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: HONG KONG -->
+    <div class="tab-panel" data-panel="hongkong">
+      <div class="case-grid">
+        <div class="case-meta">
+          <div class="case-meta-title">Case Study 02</div>
+          <div class="case-title">Hong Kong Commercial Project</div>
+          <div class="case-sub">Multi-discipline clash coordination · 2024 · Client confidential</div>
+
+          <div class="case-info-grid">
+            <div class="case-info"><div class="case-info-label">Type</div><div class="case-info-value">Commercial</div></div>
+            <div class="case-info"><div class="case-info-label">Disciplines</div><div class="case-info-value">ARC · STR · MEP</div></div>
+            <div class="case-info"><div class="case-info-label">Clash tests</div><div class="case-info-value">4 tests</div></div>
+            <div class="case-info"><div class="case-info-label">Software</div><div class="case-info-value">Navisworks</div></div>
+          </div>
+
+          <div class="case-description">
+            <strong>Federated BIM model</strong> across architecture, structural, and MEP disciplines. Ran <strong>four clash detection tests</strong> in Navisworks to identify and resolve coordination conflicts before construction. Coordinated clash resolution with the design team across multiple revision cycles.
+          </div>
+
+          <div class="case-list-label">Four clash tests executed</div>
+          <ul class="case-list">
+            <li><strong>T01:</strong> ARC vs STR — architecture against structural framing</li>
+            <li><strong>T02:</strong> ARC vs MEP — architecture against MEP routing</li>
+            <li><strong>T03:</strong> STR vs MEP — structural against MEP services</li>
+            <li><strong>T04:</strong> MEP vs MEP — internal MEP coordination</li>
+          </ul>
+
+          <div class="case-list-label">VDC workflow applied</div>
+          <ul class="case-list">
+            <li>Discipline model export (Revit → NWC)</li>
+            <li>Model federation in Navisworks Manage</li>
+            <li>Clash detective rule setup (hard, clearance, duplicate)</li>
+            <li>Issue documentation with saved viewpoints</li>
+            <li>Coordination markup and reissue cycle</li>
+          </ul>
+
+          <div class="case-callout">
+            <div class="case-callout-label">Why this proof point matters</div>
+            <div class="case-callout-text">
+              Same federated coordination workflow used on US healthcare and commercial mega-projects. International experience with multi-discipline BIM at production scale.
+            </div>
+          </div>
+        </div>
+
+        <div class="case-gallery">
+          <div class="gallery-note">Clash reports redacted for client confidentiality. Replace placeholders at <strong>/assets/images/bim/</strong>.</div>
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">◬</div>
+                  <div class="ph-label">Navisworks · Federation</div>
+                  <div class="ph-name">All disciplines combined</div>
+                </div>
+                <div class="ph-file">navisworks-federated.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⊕</div>
+                  <div class="ph-label">Clash Detective</div>
+                  <div class="ph-name">Test setup panel</div>
+                </div>
+                <div class="ph-file">navisworks-clash-setup.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⊗</div>
+                  <div class="ph-label">Clash · 3D Highlighted</div>
+                  <div class="ph-name">Conflict in federated view</div>
+                </div>
+                <div class="ph-file">navisworks-clash-3d.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">◈</div>
+                  <div class="ph-label">Clash Report</div>
+                  <div class="ph-name">T01-T04 results summary</div>
+                </div>
+                <div class="ph-file">navisworks-report.png</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: BRIGHTSOURCE -->
+    <div class="tab-panel" data-panel="brightsource">
+      <div class="case-grid">
+        <div class="case-meta">
+          <div class="case-meta-title">Case Study 03</div>
+          <div class="case-title">BrightSource Solar Project — Risk Analysis</div>
+          <div class="case-sub">Monte Carlo simulation · PJM 6015 · Northeastern · March 2025</div>
+
+          <div class="case-info-grid">
+            <div class="case-info"><div class="case-info-label">Tool</div><div class="case-info-value">Primavera RA</div></div>
+            <div class="case-info"><div class="case-info-label">Iterations</div><div class="case-info-value">10,000</div></div>
+            <div class="case-info"><div class="case-info-label">Tasks modeled</div><div class="case-info-value">53</div></div>
+            <div class="case-info"><div class="case-info-label">Distribution</div><div class="case-info-value">Triangle</div></div>
+          </div>
+
+          <div class="case-description">
+            Ran a <strong>10,000-iteration Monte Carlo simulation</strong> in Primavera Risk Analysis across a 53-task construction project. Modeled schedule and cost uncertainty using Triangle distributions. Identified top sensitivity drivers and recommended a data-backed completion date and contingency budget.
+          </div>
+
+          <div class="case-list-label">Key findings delivered</div>
+          <ul class="case-list">
+            <li><strong>80% confidence completion:</strong> Jan 27, 2026</li>
+            <li><strong>Recommended budget:</strong> $835K with $850K contingency cap</li>
+            <li><strong>Top schedule risk driver:</strong> Monitor & Control Project Work (165% SSI)</li>
+            <li><strong>Top cost risk driver:</strong> Financing/Contracts (61% sensitivity)</li>
+            <li><strong>Critical foundational tasks:</strong> Project Charter, Kick-off Meeting, High-Level Planning (100% criticality index)</li>
+          </ul>
+
+          <div class="case-list-label">Analyses produced</div>
+          <ul class="case-list">
+            <li>Project finish distribution histogram</li>
+            <li>Project cost distribution curve</li>
+            <li>Schedule sensitivity tornado graph</li>
+            <li>Cost sensitivity tornado graph</li>
+            <li>Schedule Sensitivity Index (SSI) tornado</li>
+            <li>Criticality Index tornado</li>
+            <li>Duration Cruciality analysis</li>
+          </ul>
+
+          <div class="case-callout">
+            <div class="case-callout-label">Why this proof point matters</div>
+            <div class="case-callout-text">
+              Modern GCs run quantitative risk on every major project. PRA + Monte Carlo is the industry standard. Most co-op-stage candidates have never built one — I have.
+            </div>
+          </div>
+        </div>
+
+        <div class="case-gallery">
+          <div class="gallery-note">Graphs from the full PJM 6015 deliverable. Replace placeholders at <strong>/assets/images/pm-tools/</strong>.</div>
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⌶</div>
+                  <div class="ph-label">PRA · Finish Distribution</div>
+                  <div class="ph-name">Project completion histogram</div>
+                </div>
+                <div class="ph-file">pra-finish-distribution.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⌹</div>
+                  <div class="ph-label">PRA · Cost Distribution</div>
+                  <div class="ph-name">Cost probability curve</div>
+                </div>
+                <div class="ph-file">pra-cost-distribution.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⊟</div>
+                  <div class="ph-label">PRA · Schedule Tornado</div>
+                  <div class="ph-name">Duration sensitivity ranking</div>
+                </div>
+                <div class="ph-file">pra-tornado-schedule.png</div>
+              </div>
+            </div>
+            <div class="gallery-item">
+              <div class="placeholder">
+                <span class="ph-tag">PREVIEW</span>
+                <div>
+                  <div class="ph-icon">⊟</div>
+                  <div class="ph-label">PRA · SSI Tornado</div>
+                  <div class="ph-name">Schedule sensitivity index</div>
+                </div>
+                <div class="ph-file">pra-tornado-ssi.png</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — TOOLS MASTERY -->
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">03 · Tools Mastery</span>
+        <h2>The VDC software stack I work with.</h2>
+      </div>
+      <p class="sub">Proficiency levels reflect production work — not just classroom exposure.</p>
+    </div>
+    <div class="tools-grid" id="toolsGrid"></div>
+  </section>
+
+  <!-- SECTION 04 — HONESTY -->
+  <section class="section-band">
+    <div class="section-title">
+      <div>
+        <span class="section-num">04 · Straight Talk</span>
+        <h2>What I can defend in an interview.</h2>
+      </div>
+      <p class="sub">Honest scope. No overclaiming.</p>
+    </div>
+
+    <div class="honesty-card">
+      <div class="honesty-label">For Gilbane recruiters reading this</div>
+      <div class="honesty-text">
+        I'm a <strong>BIM/VDC Coordinator candidate</strong>, not a 10-year veteran. What I bring is <strong>real Revit ownership on a built project</strong>, <strong>real Navisworks clash detection</strong> on an international commercial job, and <strong>quantitative risk modeling that most candidates can't show</strong>. Layered onto 14 months of actual construction site experience in India and a live US healthcare co-op at UMass Chan Medical School. I won't pretend to know what I don't. I will learn fast and contribute on day one.
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ============ DATA ============
+const WORKFLOW = [
+  {num:"01", title:"BIM Execution Plan", short:"Define scope, LOD, deliverables", desc:"Establish the BIM Execution Plan (BEP) — defines modeling scope, level of development (LOD 100-500), file-naming conventions, coordinate systems, model ownership, and deliverables across all project disciplines.", tools:["BEP Template","ISO 19650","CDE setup"]},
+  {num:"02", title:"Discipline Modeling", short:"Build ARC, STR, MEP models", desc:"Each discipline builds their own authoring model in native software. Architects in Revit ARC, structural engineers in Revit STR (or Tekla), MEP engineers in Revit MEP. Model linking and shared parameters maintained throughout.", tools:["Revit","Tekla","AutoCAD","Civil 3D"]},
+  {num:"03", title:"Federation", short:"Combine into Navisworks", desc:"Export discipline models to NWC format and federate them in Navisworks Manage. Set up the federated model with proper coordinate systems, search sets, and viewpoints for coordination meetings.", tools:["Navisworks","NWC export","Search sets"]},
+  {num:"04", title:"Clash Detection", short:"Identify conflicts systematically", desc:"Run Clash Detective tests across discipline pairs (ARC×STR, ARC×MEP, STR×MEP, MEP×MEP). Configure rules for hard clashes, clearance clashes, and duplicate elements. Tag, document, and assign clashes for resolution.", tools:["Clash Detective","Saved viewpoints","Issue tracking"]},
+  {num:"05", title:"Issue Coordination Review", short:"Resolve with design team", desc:"Hold weekly Issue Coordination Reviews (ICR) with design teams. Walk through clash reports, agree on resolution responsibility, prioritize critical-path issues, and document resolutions in the federated model.", tools:["BIM 360","ACC","Bluebeam"]},
+  {num:"06", title:"4D Scheduling", short:"Link model to schedule", desc:"Link the federated model to project schedule (Primavera P6 or MS Project) to create 4D simulations. Use TimeLiner to visualize sequence, identify schedule-related conflicts, and communicate construction sequence to field teams.", tools:["Navisworks TimeLiner","P6","Synchro"]},
+  {num:"07", title:"Construction Issue Tracking", short:"Document & resolve field issues", desc:"During construction, use the model as a single source of truth. Document RFIs against model views. Update the model to reflect approved field changes. Push updates back to the CDE.", tools:["Procore","BIM 360","RFI workflow"]},
+  {num:"08", title:"As-Built Handover", short:"Deliver record model to owner", desc:"Update the federated model with final field-installed conditions. Verify against COBie data for asset handover. Deliver the as-built record model along with O&M documentation to the facility owner.", tools:["COBie","FM-ready model","Owner handoff"]}
+];
+
+const TOOLS = [
+  {name:"Revit", prof:"Production proficient", color:"#2f6690", abbr:"RV", fill:85, desc:"Architecture and structural modeling. Construction documentation, schedules, sheet sets. LOD 300 deliverables."},
+  {name:"Navisworks", prof:"Production proficient", color:"#5f8d7a", abbr:"NV", fill:80, desc:"Federation, clash detection, saved viewpoints, issue documentation. 4 clash tests on Hong Kong project."},
+  {name:"Primavera Risk Analysis", prof:"Coursework + production", color:"#c3833f", abbr:"PRA", fill:75, desc:"Monte Carlo simulation, sensitivity analysis, tornado graphs. 10,000-iteration BrightSource model delivered."},
+  {name:"Primavera P6", prof:"Coursework proficient", color:"#6860a8", abbr:"P6", fill:70, desc:"Baseline scheduling, critical path method, resource leveling, S-curves. Northeastern coursework + practice projects."},
+  {name:"Procore", prof:"Certified + live use", color:"#a64b43", abbr:"PC", fill:80, desc:"PM Certified. Daily use at UMass Chan co-op — submittals, RFIs, daily reports, document control."},
+  {name:"AutoCAD", prof:"Production proficient", color:"#475569", abbr:"AC", fill:90, desc:"Construction documentation. 14 months of working drawings at JNK Architects across 8 projects."}
+];
+
+// ============ WORKFLOW RENDER ============
+const wfTrack = document.getElementById("workflowTrack");
+wfTrack.innerHTML = WORKFLOW.map((w,i) => `
+  <div class="workflow-step" data-index="${i}" onclick="toggleWorkflow(${i})">
+    <div class="ws-num">STEP ${w.num}</div>
+    <div class="ws-title">${w.title}</div>
+    <div class="ws-short">${w.short}</div>
+  </div>
+`).join("") + `<div class="workflow-detail-panel" id="wfPanel"><div class="wdp-inner" id="wfPanelInner"></div></div>`;
+
+function toggleWorkflow(idx) {
+  const steps = document.querySelectorAll(".workflow-step");
+  const panel = document.getElementById("wfPanel");
+  const inner = document.getElementById("wfPanelInner");
+  const isOpen = steps[idx].classList.contains("is-open");
+  steps.forEach(s => s.classList.remove("is-open"));
+  if (isOpen) {
+    panel.classList.remove("is-visible");
+    return;
+  }
+  steps[idx].classList.add("is-open");
+  const w = WORKFLOW[idx];
+  inner.innerHTML = `
+    <div class="wdp-title">Step ${w.num} · ${w.title}</div>
+    <div class="wdp-desc">${w.desc}</div>
+    <div class="wdp-tools">${w.tools.map(t => `<span class="wdp-tool">${t}</span>`).join("")}</div>
+  `;
+  panel.classList.add("is-visible");
+}
+
+// ============ TABS ============
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.tab;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelector(`.tab-panel[data-panel="${target}"]`).classList.add("active");
+  });
+});
+
+// ============ TOOLS RENDER ============
+document.getElementById("toolsGrid").innerHTML = TOOLS.map(t => `
+  <div class="tool-card" style="--fill:${t.fill}%">
+    <div class="tool-header">
+      <div class="tool-icon" style="background:${t.color}">${t.abbr}</div>
+      <div>
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-prof">${t.prof}</div>
+      </div>
+    </div>
+    <div class="tool-desc">${t.desc}</div>
+    <div class="tool-bar"><div class="tool-bar-fill"></div></div>
+  </div>
+`).join("");
+
+// ============ ANIMATIONS ============
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = window.matchMedia("(hover: none)").matches;
+const isSmallScreen = window.innerWidth < 768;
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    if (entry.target.id === "workflowTrack") {
+      entry.target.querySelectorAll(".workflow-step").forEach((item, i) => {
+        setTimeout(() => item.classList.add("visible"), reduceMotion ? 0 : i * 80);
+      });
+    }
+    if (entry.target.id === "toolsGrid") {
+      entry.target.querySelectorAll(".tool-card").forEach((item, i) => {
+        setTimeout(() => item.classList.add("visible"), reduceMotion ? 0 : i * 100);
+      });
+    }
+    observer.unobserve(entry.target);
+  });
+}, { threshold: 0.15 });
+
+[document.getElementById("workflowTrack"), document.getElementById("toolsGrid")].forEach(el => observer.observe(el));
+
+function animateCount(el) {
+  const target = Number(el.dataset.count || 0);
+  const prefix = el.dataset.prefix || "";
+  const suffix = el.dataset.suffix || "";
+  const duration = reduceMotion ? 1 : 1500;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(eased * target);
+    el.textContent = prefix + (target >= 1000 ? value.toLocaleString() : value) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const metricObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll("[data-count]").forEach(animateCount);
+    metricObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll(".header-stats").forEach(el => metricObserver.observe(el));
+
+// Cursor light
+if (!isTouch && !reduceMotion) {
+  const light = document.querySelector(".cursor-light");
+  window.addEventListener("pointermove", (e) => {
+    light.style.opacity = "1";
+    light.style.left = `${e.clientX}px`;
+    light.style.top = `${e.clientY}px`;
+  });
+}
+
+// 3D tilt on tool cards
+if (!isTouch && !reduceMotion) {
+  document.querySelectorAll(".tool-card").forEach(card => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(700px) rotateX(${y * -4}deg) rotateY(${x * 5}deg) translateY(-3px)`;
+    });
+    card.addEventListener("pointerleave", () => { card.style.transform = ""; });
+  });
+}
+
+// Blueprint canvas
+if (!isSmallScreen && !isTouch && !reduceMotion) {
+  const canvas = document.querySelector(".blueprint-canvas");
+  const ctx = canvas.getContext("2d");
+  let points = [];
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * ratio);
+    canvas.height = Math.floor(innerHeight * ratio);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    points = Array.from({ length: Math.max(20, Math.floor(innerWidth / 42)) }, () => ({
+      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+      vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32
+    }));
+  }
+  function drawBlueprint() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.lineWidth = 1;
+    points.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20 || p.x > innerWidth + 20) p.vx *= -1;
+      if (p.y < -20 || p.y > innerHeight + 20) p.vy *= -1;
+      for (let j = i + 1; j < points.length; j++) {
+        const q = points[j];
+        const dx = p.x - q.x; const dy = p.y - q.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 155) {
+          ctx.strokeStyle = `rgba(47,102,144,${(1 - dist / 155) * 0.18})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "rgba(47,102,144,0.22)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(drawBlueprint);
+  }
+  resizeCanvas();
+  drawBlueprint();
+  window.addEventListener("resize", resizeCanvas);
+} else {
+  document.querySelector(".blueprint-canvas").style.display = "none";
+}
+</script>
+</body>
+</html>
