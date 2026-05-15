@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Projects — Kashyap Joshi</title>
+<meta name="description" content="Academic architecture portfolio — thesis, civic, commercial, and residential design projects translated through a construction PM lens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111827;
+  --ink-soft: #475569;
+  --ink-muted: #7c8796;
+  --paper: #fbfcfd;
+  --panel: rgba(255,255,255,0.86);
+  --line: rgba(30,41,59,0.12);
+  --line-strong: rgba(30,41,59,0.22);
+  --sage: #5f8d7a;
+  --sage-dark: #3f6a59;
+  --steel: #2f6690;
+  --steel-dark: #1f4d70;
+  --amber: #c3833f;
+  --brick: #a64b43;
+  --violet: #6860a8;
+  --shadow: 0 18px 55px rgba(15,23,42,0.11);
+  --shadow-soft: 0 8px 28px rgba(15,23,42,0.08);
+  --radius: 8px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(47,102,144,0.18), transparent 30rem),
+    radial-gradient(circle at 82% 14%, rgba(95,141,122,0.18), transparent 32rem),
+    linear-gradient(180deg, #eef3f5 0%, #fbfcfd 36%, #f7f4ee 100%);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background-image:
+    linear-gradient(rgba(47,102,144,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,102,144,0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 78%);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap;
+}
+
+.blueprint-canvas {
+  position: fixed; inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.cursor-light {
+  position: fixed; left: 0; top: 0;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(circle, rgba(200,131,63,0.16), rgba(95,141,122,0.08) 38%, transparent 70%);
+  transition: opacity 300ms ease;
+}
+
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
+
+/* HEADER */
+.widget-header {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4vw, 48px);
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.widget-header::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px),
+    linear-gradient(transparent 0 39px, rgba(47,102,144,0.07) 40px, transparent 41px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+}
+.widget-header-inner { position: relative; z-index: 1; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--steel);
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 22px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 900ms var(--ease) 100ms forwards;
+}
+.eyebrow::before {
+  content: ""; width: 32px; height: 2px; background: var(--amber);
+}
+
+.widget-title {
+  font-size: clamp(34px, 5.5vw, 56px);
+  line-height: 1;
+  font-weight: 880;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+  max-width: 800px;
+  opacity: 0; transform: translateY(30px);
+  animation: fadeUp 1000ms var(--ease) 250ms forwards;
+}
+.widget-title .accent { color: var(--steel-dark); }
+
+.widget-lead {
+  max-width: 720px;
+  color: var(--ink-soft);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.7;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 1000ms var(--ease) 400ms forwards;
+}
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 28px;
+  padding: 6px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 800ms var(--ease) 600ms forwards;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.filter-btn {
+  flex: 1;
+  min-width: max-content;
+  padding: 11px 18px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  border-radius: 6px;
+  transition: all 280ms var(--ease);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-btn:hover { color: var(--ink); background: rgba(47,102,144,0.06); }
+.filter-btn.active {
+  background: var(--ink);
+  color: white;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.18);
+}
+.filter-btn-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 100px;
+  background: rgba(47,102,144,0.08);
+  color: var(--steel);
+}
+.filter-btn.active .filter-btn-count {
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,.85);
+}
+
+/* PROJECTS GRID */
+.projects-wrap { margin-top: 22px; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.proj-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.78);
+  cursor: pointer;
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease), box-shadow 320ms ease, border-color 320ms ease;
+  opacity: 0;
+  transform: translateY(20px);
+  display: flex;
+  flex-direction: column;
+}
+.proj-card.visible { opacity: 1; transform: translateY(0); }
+.proj-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 14px 40px rgba(15,23,42,0.10);
+  transform: translateY(-4px);
+}
+
+.proj-thumb {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-bottom: 1px solid var(--line);
+}
+.proj-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 700ms var(--ease);
+}
+.proj-card:hover .proj-thumb img {
+  transform: scale(1.04);
+}
+
+.proj-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  opacity: 0;
+  transition: opacity 400ms var(--ease);
+}
+.proj-card:hover .proj-thumb-overlay { opacity: 1; }
+.proj-thumb-overlay-text {
+  color: white;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Placeholder for projects without real images */
+.proj-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+  background:
+    repeating-linear-gradient(45deg, rgba(47,102,144,0.04) 0 1px, transparent 1px 14px),
+    linear-gradient(135deg, #f8fafc 0%, #e9eef3 100%);
+  position: relative;
+}
+.proj-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1.5px dashed rgba(47,102,144,0.32);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.ph-corner-tag {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  background: var(--amber);
+  color: white;
+  border-radius: 3px;
+  letter-spacing: .1em;
+  z-index: 2;
+}
+.ph-icon {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 700;
+  color: rgba(47,102,144,0.4);
+  z-index: 1;
+}
+.ph-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--steel-dark);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+.ph-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 4px;
+  line-height: 1.3;
+  z-index: 1;
+}
+.ph-file {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  z-index: 1;
+}
+
+.proj-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.proj-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .12em;
+  margin-bottom: 8px;
+}
+.proj-title {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+.proj-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.proj-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.proj-tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 100px;
+  background: var(--accent-bg);
+  color: var(--accent-dark);
+  border: 1px solid var(--accent-border);
+  letter-spacing: .04em;
+}
+.proj-cta {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap 300ms var(--ease);
+}
+.proj-card:hover .proj-cta { gap: 10px; }
+
+/* Expanded detail panel — spans 2 columns */
+.proj-detail {
+  grid-column: 1 / -1;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 700ms var(--ease);
+}
+.proj-detail.is-visible {
+  max-height: 3500px;
+}
+.proj-detail-inner {
+  margin-top: 0;
+  padding: 28px;
+  border: 1px solid var(--accent);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: white;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 600ms var(--ease) 200ms, transform 600ms var(--ease) 200ms;
+}
+.proj-detail.is-visible .proj-detail-inner {
+  opacity: 1; transform: translateY(0);
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+.detail-h-text {
+  flex: 1;
+}
+.detail-h-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .15em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.detail-h-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.15;
+}
+.detail-h-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.detail-close {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(47,102,144,0.06);
+  color: var(--steel);
+  display: grid; place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 280ms var(--ease);
+}
+.detail-close:hover {
+  background: var(--ink);
+  color: white;
+}
+.detail-close svg { width: 16px; height: 16px; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.stat-cell {
+  padding: 14px;
+  background: rgba(47,102,144,0.04);
+  border: 1px solid rgba(47,102,144,0.12);
+  border-radius: 6px;
+}
+.stat-cell-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--steel);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.stat-cell-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.section-block { margin-bottom: 22px; }
+.section-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  letter-spacing: .14em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.section-text {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+.section-text strong { color: var(--ink); font-weight: 700; }
+
+.phase-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.phase-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.phase-text {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.phase-text strong { color: var(--ink); font-weight: 700; }
+
+.pm-bar-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 40px;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 9px;
+}
+.pm-bar-label {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.pm-bar-track {
+  height: 8px;
+  background: rgba(47,102,144,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.pm-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  border-radius: 4px;
+  width: 0;
+  transition: width 1200ms var(--ease);
+}
+.proj-detail.is-visible .pm-bar-fill { width: var(--fill); }
+
+.pm-bar-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.tools-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tool-pill {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  background: rgba(47,102,144,0.06);
+  border: 1px solid rgba(47,102,144,0.2);
+  border-radius: 4px;
+  color: var(--steel);
+}
+
+.pm-note {
+  margin-top: 4px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(95,141,122,0.07), rgba(200,131,63,0.04));
+  border: 1px solid rgba(95,141,122,0.22);
+  border-radius: var(--radius);
+}
+.pm-note-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  letter-spacing: .14em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.pm-note-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.detail-link-row {
+  margin-top: 22px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 9px 14px;
+  border-radius: 6px;
+  transition: all 280ms var(--ease);
+}
+.detail-link.primary {
+  background: var(--ink);
+  color: white;
+}
+.detail-link.primary:hover {
+  background: var(--steel-dark);
+  gap: 11px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(15,23,42,0.18);
+}
+.detail-link.secondary {
+  background: rgba(47,102,144,0.08);
+  color: var(--steel-dark);
+  border: 1px solid rgba(47,102,144,0.2);
+}
+.detail-link.secondary:hover {
+  background: var(--steel);
+  color: white;
+  gap: 11px;
+}
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--ink-muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .projects-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .pm-bar-row { grid-template-columns: 1fr; gap: 4px; }
+  .pm-bar-val { text-align: left; }
+  .detail-header { flex-direction: column-reverse; align-items: stretch; }
+  .detail-close { align-self: flex-end; }
+}
+
+@media (max-width: 620px) {
+  .page { width: min(100% - 22px, 1180px); padding-top: 14px; }
+  .widget-header { padding: 22px; }
+  .filter-bar { gap: 4px; padding: 4px; }
+  .filter-btn { padding: 9px 12px; font-size: 11.5px; }
+  .proj-body { padding: 14px; }
+  .proj-title { font-size: 15px; }
+  .detail-h-title { font-size: 19px; }
+  .proj-detail-inner { padding: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas class="blueprint-canvas" aria-hidden="true"></canvas>
+<div class="cursor-light" aria-hidden="true"></div>
+
+<div class="page">
+  <h2 class="sr-only">Architecture projects portfolio — Kashyap Joshi</h2>
+
+  <header class="widget-header">
+    <div class="widget-header-inner">
+      <div class="eyebrow">Architecture &middot; Design Portfolio</div>
+      <h1 class="widget-title">Six academic projects. <span class="accent">Read through a construction PM lens.</span></h1>
+      <p class="widget-lead">From a 49,000 sqm thesis campus to detailed interior fit-outs — each project is a coordination story. Click any card to expand the full case study with PM complexity, tools used, and why it matters for construction project management.</p>
+
+      <div class="filter-bar" id="filterBar"></div>
+    </div>
+  </header>
+
+  <div class="projects-wrap">
+    <div class="projects-grid" id="projGrid"></div>
+  </div>
+</div>
+
+<script>
+const PROJECTS = [
+  {
+    id: "thesis",
+    cat: "civic",
+    num: "01",
+    title: "Vedic Sanskrit Research Centre & Institute",
+    meta: "B.Arch Thesis &middot; 49,000 sqm campus &middot; Ahmedabad &middot; 2023",
+    accent: "#5f8d7a",
+    accentDark: "#3f6a59",
+    accentBg: "rgba(95,141,122,0.06)",
+    accentBorder: "rgba(95,141,122,0.22)",
+    image: "../assets/images/renders/heroaerial.jpg",
+    imageAlt: "Vedic Sanskrit Research Centre aerial campus view",
+    tags: ["Thesis", "Institutional campus", "Vastu Purusha Mandala"],
+    cta: "View thesis case study",
+    stats: [
+      { l: "Site area", v: "49,000 sqm" },
+      { l: "Programs", v: "7 integrated zones" },
+      { l: "Year", v: "2021-2023" },
+      { l: "Guide", v: "Ar. Chaitali Shroff" }
+    ],
+    concept: "A contemporary institutional campus combining Sanskrit research, gurukul learning, public culture, residence, landscape, and spiritual practice. Organized through <strong>Vastu Purusha Mandala</strong> as an ordering framework — translating traditional spatial logic into modern campus planning.",
+    phases: [
+      { t: "Master planning", d: "Established cardinal orientation, primary spine, and program zoning using Vastu grid logic. Carved volumes to form courts, shaded edges, and porous movement corridors." },
+      { t: "Program integration", d: "Seven distinct programs (research, pathshala, residence, museum, auditorium, goshala, ritual zones) organized around central temple axis with clear hierarchy." },
+      { t: "Landscape + climate", d: "Water bodies, vegetation, and plazas designed for hot-humid Gujarat climate. Open-to-sky courts for ventilation. Layered landscape creates experiential sequence." },
+      { t: "PM lens", d: "Multi-stakeholder, multi-zone coordination at campus scale — the same complexity that defines US healthcare and institutional construction projects." }
+    ],
+    pm: [
+      { l: "Program complexity", v: 95 },
+      { l: "Stakeholder breadth", v: 90 },
+      { l: "Site scale", v: 95 },
+      { l: "Documentation rigor", v: 88 }
+    ],
+    tools: ["Revit", "AutoCAD", "SketchUp", "V-Ray", "Lumion", "Photoshop"],
+    note: "Campus-scale master planning is the closest academic equivalent to US healthcare or higher-ed construction PM work. Multiple programs, multiple stakeholders, axis-driven organization, and documentation rigor all translate directly.",
+    externalLink: "https://kashh1147.github.io/new-thesis-2026/"
+  },
+  {
+    id: "crematorium",
+    cat: "civic",
+    num: "02",
+    title: "Crematorium — Varanasi",
+    meta: "Sem 5 &middot; 10,000 sqm &middot; Ganga riverfront &middot; UP",
+    accent: "#2f6690",
+    accentDark: "#1f4d70",
+    accentBg: "rgba(47,102,144,0.06)",
+    accentBorder: "rgba(47,102,144,0.22)",
+    image: null,
+    placeholderLabel: "Civic &middot; Riverfront",
+    placeholderName: "Crematorium project render",
+    placeholderFile: "crematorium-aerial.jpg",
+    tags: ["Civic", "Spiritual concept", "River ghat"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Site area", v: "10,000 sqm" },
+      { l: "Location", v: "Varanasi, UP" },
+      { l: "Program", v: "7 cremation types" },
+      { l: "Climate", v: "Hot &amp; humid" }
+    ],
+    concept: "The human body is composed of <strong>6 layers</strong> — physical, mental, causal, vital, soul, and supracausal. The supracausal body protects the soul from negative energy. This concept drove the spatial hierarchy: transition from the public realm inward toward a sacred, protected core.",
+    phases: [
+      { t: "Site analysis", d: "Ganga riverfront site, connectivity via Malviya Bridge and Mirzapur Road. Flood zone and alluvial soil considered in ground floor planning." },
+      { t: "Zoning", d: "Cremation zones (wooden, electric, sant), prayer hall, gathering space, graveyard for children, body wash area — all separated by landscape courts." },
+      { t: "Constructability", d: "Masonry load-bearing walls, RCC flat slabs, open-to-sky courts for ventilation in hot-humid climate. No AC required." },
+      { t: "PM lens", d: "Complex multi-stakeholder program — religious community, municipality, public. Separate access routes for families, staff, and services would shape the construction logistics plan." }
+    ],
+    pm: [
+      { l: "Stakeholder complexity", v: 90 },
+      { l: "Site constraint", v: 85 },
+      { l: "Program complexity", v: 88 },
+      { l: "Construction challenge", v: 70 }
+    ],
+    tools: ["AutoCAD", "SketchUp", "V-Ray", "Lumion"],
+    note: "Reframed for PM portfolio: this project required reasoning about competing stakeholder needs (municipality, religious groups, public), restricted site access near a waterway, and a sensitive program requiring strict spatial separation. Directly analogous to complex US civic projects."
+  },
+  {
+    id: "apmc",
+    cat: "commercial",
+    num: "03",
+    title: "APMC Market — Surat",
+    meta: "Sem 7 &middot; Wholesale vegetable market redesign",
+    accent: "#c3833f",
+    accentDark: "#8e5e25",
+    accentBg: "rgba(195,131,63,0.06)",
+    accentBorder: "rgba(195,131,63,0.22)",
+    image: null,
+    placeholderLabel: "Commercial &middot; Market",
+    placeholderName: "APMC market render",
+    placeholderFile: "apmc-render.jpg",
+    tags: ["Commercial", "Market typology", "Heavy logistics"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Location", v: "Surat, Gujarat" },
+      { l: "Type", v: "Wholesale market" },
+      { l: "Users", v: "Vendors + buyers" },
+      { l: "Constraint", v: "Live operations" }
+    ],
+    concept: "Wholesale vegetable market serving as a hub for vendors, buyers, and trucks. Design proposal addressed <strong>large-span shed structures</strong>, vehicular logistics, and a phased redevelopment strategy to maintain market operations during construction.",
+    phases: [
+      { t: "Program analysis", d: "Wholesale vs retail flow separation, cold storage zones, vendor stall typology, auction hall, administration, and worker amenities." },
+      { t: "Structural", d: "Large-span steel truss roofing for column-free vendor halls. RCC frame for administration and cold storage." },
+      { t: "Logistics", d: "Truck loading bays, parking, and pedestrian flow studied to separate heavy vehicles from public circulation." },
+      { t: "PM lens", d: "Design proposal addressed phased delivery to keep the market operational during construction — a real-world constraint that shaped the entire site organization and sequence." }
+    ],
+    pm: [
+      { l: "Program complexity", v: 95 },
+      { l: "Phased delivery", v: 88 },
+      { l: "Stakeholder groups", v: 92 },
+      { l: "Site logistics", v: 85 }
+    ],
+    tools: ["AutoCAD", "SketchUp", "Lumion", "MS Project"],
+    note: "Directly transferable to US commercial/industrial PM work: complex multi-user program, phased construction in a live operational environment, heavy vehicle logistics, and large-span structural coordination."
+  },
+  {
+    id: "firestation",
+    cat: "civic",
+    num: "04",
+    title: "Fire Station + Fireman Housing — Surat",
+    meta: "Sem 8 &middot; 1 acre &middot; Majuragate &middot; Mixed-use campus",
+    accent: "#a64b43",
+    accentDark: "#7c3933",
+    accentBg: "rgba(166,75,67,0.06)",
+    accentBorder: "rgba(166,75,67,0.22)",
+    image: null,
+    placeholderLabel: "Civic + Residential",
+    placeholderName: "Fire station campus render",
+    placeholderFile: "firestation-render.jpg",
+    tags: ["Civic + residential", "Campus design", "Emergency services"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Location", v: "Majuragate, Surat" },
+      { l: "Site area", v: "1 acre" },
+      { l: "Residential", v: "G+5 housing" },
+      { l: "Climate", v: "Tropical" }
+    ],
+    concept: "The fire station is surrounded by <strong>3 roads</strong> to enable rapid truck exit in all directions. The residential tower for firemen is positioned to maximize visual oversight of the station. A green campus with recreational amenities creates a complete live-work environment for emergency service personnel.",
+    phases: [
+      { t: "Site analysis", d: "3-road corner site in Majuragate, Surat. High-rise residential and commercial context. Fire truck turning radii drove site layout and road widths." },
+      { t: "Residential design", d: "G+5 housing with 2BHK units (Type A and B), first and second floor cluster plans, unit mix for single and family firemen." },
+      { t: "Constructability", d: "RCC frame for residential tower, separate structural grid for fire station bay (large-span, no internal columns). Curtain wall glazing for station facade." },
+      { t: "PM lens", d: "Two structural systems on one site &mdash; phased construction proposed to keep fire station operational during residential tower build. Emergency services cannot be shut down." }
+    ],
+    pm: [
+      { l: "Dual program delivery", v: 90 },
+      { l: "Operational continuity", v: 95 },
+      { l: "Structural coordination", v: 85 },
+      { l: "Site logistics", v: 80 }
+    ],
+    tools: ["Revit", "AutoCAD", "Lumion", "SketchUp"],
+    note: "Strong PM parallel: delivering two structurally different buildings on one constrained site while maintaining emergency service operations &mdash; analogous to healthcare or occupied facility construction in the US."
+  },
+  {
+    id: "interior",
+    cat: "residential",
+    num: "05",
+    title: "Interior Design — Bhuj",
+    meta: "Sem 6 &middot; Bedroom + wardrobe + TV unit &middot; Gujarat",
+    accent: "#6860a8",
+    accentDark: "#4a4480",
+    accentBg: "rgba(104,96,168,0.06)",
+    accentBorder: "rgba(104,96,168,0.22)",
+    image: null,
+    placeholderLabel: "Residential &middot; Interior",
+    placeholderName: "Interior bedroom render",
+    placeholderFile: "interior-bhuj.jpg",
+    tags: ["Interior design", "FF&E coordination", "Traditional fusion"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Location", v: "Bhuj, Gujarat" },
+      { l: "Type", v: "Residential bedroom" },
+      { l: "Theme", v: "Modern + traditional" },
+      { l: "Deliverable", v: "Full interior package" }
+    ],
+    concept: "Client brief: <strong>modern house with traditional aspects</strong>, green natural colors, wooden furniture, Islamic modern architecture style. Theme developed: modern and traditional fusion with natural elements appropriate to the Kutchi context.",
+    phases: [
+      { t: "Client brief", d: "3 layout options developed for client selection &mdash; varying bedroom orientation, dressing area, and toilet relationship. Final layout chosen based on flow and storage." },
+      { t: "Design development", d: "Ceiling plan, flooring plan, 4 wall elevations (A, B, C, D), wardrobe design with interior elevation, TV unit design, bed design with side elevations." },
+      { t: "FF&amp;E", d: "Custom bed design, wardrobe with organizational layout, TV unit &mdash; all coordinated with the room geometry and Islamic pattern motifs." },
+      { t: "PM lens", d: "Interior projects require the most precise subcontractor coordination &mdash; carpenter, tile layer, electrician, painter &mdash; all in a confined space with tight sequencing." }
+    ],
+    pm: [
+      { l: "Client management", v: 92 },
+      { l: "FF&E coordination", v: 88 },
+      { l: "Finish sequencing", v: 85 },
+      { l: "Design precision", v: 95 }
+    ],
+    tools: ["AutoCAD", "SketchUp", "V-Ray", "Photoshop"],
+    note: "Interior projects are where PM skills are most visible at the micro level &mdash; every finish transition, every subcontractor interface, every client change has a cost and schedule impact. This project taught that discipline."
+  },
+  {
+    id: "housing",
+    cat: "residential",
+    num: "06",
+    title: "Incremental Housing — Artisan Communities",
+    meta: "Studio project &middot; Affordable + adaptive housing",
+    accent: "#0c447c",
+    accentDark: "#082c54",
+    accentBg: "rgba(12,68,124,0.06)",
+    accentBorder: "rgba(12,68,124,0.22)",
+    image: null,
+    placeholderLabel: "Residential &middot; Affordable",
+    placeholderName: "Incremental housing render",
+    placeholderFile: "housing-render.jpg",
+    tags: ["Affordable housing", "Incremental design", "Community"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Type", v: "Affordable housing" },
+      { l: "User", v: "Artisan community" },
+      { l: "Model", v: "Incremental growth" },
+      { l: "Constraint", v: "Budget + culture" }
+    ],
+    concept: "Affordable housing design proposing an <strong>incremental growth model</strong> &mdash; a core habitable unit that families can expand over time as resources allow. Designed for traditional artisan communities, balancing cultural needs with construction economy.",
+    phases: [
+      { t: "Cultural analysis", d: "Studied traditional artisan family structures, workshop-home relationships, and how housing accommodates craft production alongside living." },
+      { t: "Core unit design", d: "Minimum viable habitable unit with structural pre-provisions for future expansion (foundation reinforcement, roof connections, services stub-outs)." },
+      { t: "Expansion logic", d: "Pre-planned expansion rooms, vertical and horizontal growth options, materials that families could source locally and add over time." },
+      { t: "PM lens", d: "Multi-phase construction logic applied to a single dwelling &mdash; the same thinking applied to commercial phased construction projects." }
+    ],
+    pm: [
+      { l: "Phased construction", v: 92 },
+      { l: "Cost sensitivity", v: 95 },
+      { l: "User co-design", v: 88 },
+      { l: "Standardization", v: 85 }
+    ],
+    tools: ["AutoCAD", "SketchUp", "Photoshop"],
+    note: "Phased construction thinking translates directly to commercial PM work. The discipline of designing for future expansion while remaining buildable today is exactly the kind of thinking needed for owner-occupied healthcare or institutional facilities."
+  }
+];
+
+const FILTERS = [
+  { id: "all", label: "All projects" },
+  { id: "civic", label: "Civic" },
+  { id: "commercial", label: "Commercial" },
+  { id: "residential", label: "Residential" }
+];
+
+let activeFilter = "all";
+let openId = null;
+
+function renderFilters() {
+  document.getElementById("filterBar").innerHTML = FILTERS.map(f => {
+    const count = f.id === "all" ? PROJECTS.length : PROJECTS.filter(p => p.cat === f.id).length;
+    return `
+      <button class="filter-btn ${activeFilter === f.id ? 'active' : ''}" onclick="setFilter('${f.id}')">
+        ${f.label}
+        <span class="filter-btn-count">${count}</span>
+      </button>
+    `;
+  }).join("");
+}
+
+function buildCard(p, i) {
+  const thumbContent = p.image
+    ? `<img src="${p.image}" alt="${p.imageAlt || p.title}" onerror="this.parentElement.innerHTML='<div class=\\'proj-placeholder\\'><span class=\\'ph-corner-tag\\'>UPLOAD</span><div class=\\'ph-icon\\'>&#9645;</div><div><div class=\\'ph-label\\'>Image missing</div><div class=\\'ph-name\\'>${p.placeholderName || p.title}</div><div class=\\'ph-file\\'>${p.image}</div></div></div>'">`
+    : `<div class="proj-placeholder">
+        <span class="ph-corner-tag">UPLOAD</span>
+        <div class="ph-icon">&#9645;</div>
+        <div>
+          <div class="ph-label">${p.placeholderLabel || p.cat}</div>
+          <div class="ph-name">${p.placeholderName}</div>
+          <div class="ph-file">/assets/images/renders/${p.placeholderFile}</div>
+        </div>
+      </div>`;
+
+  return `
+    <article class="proj-card" data-id="${p.id}" 
+             style="--accent:${p.accent};--accent-dark:${p.accentDark};--accent-bg:${p.accentBg};--accent-border:${p.accentBorder};animation-delay:${i * 80}ms"
+             onclick="toggleProject('${p.id}')">
+      <div class="proj-thumb">
+        ${thumbContent}
+        <div class="proj-thumb-overlay">
+          <div class="proj-thumb-overlay-text">
+            <span>${p.cta}</span>
+            <span>&rarr;</span>
+          </div>
+        </div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-num">PROJECT ${p.num}</div>
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-meta">${p.meta}</div>
+        <div class="proj-tags">
+          ${p.tags.map(t => `<span class="proj-tag">${t}</span>`).join("")}
+        </div>
+        <div class="proj-cta">${p.cta} &rarr;</div>
+      </div>
+    </article>
+  `;
+}
+
+function buildDetail(p) {
+  return `
+    <div class="proj-detail is-visible" id="detail-${p.id}"
+         style="--accent:${p.accent};--accent-dark:${p.accentDark};--accent-bg:${p.accentBg};--accent-border:${p.accentBorder}">
+      <div class="proj-detail-inner">
+        <div class="detail-header">
+          <div class="detail-h-text">
+            <div class="detail-h-num">PROJECT ${p.num} &middot; ${p.cat.toUpperCase()}</div>
+            <div class="detail-h-title">${p.title}</div>
+            <div class="detail-h-sub">${p.meta}</div>
+          </div>
+          <div class="detail-close" onclick="event.stopPropagation();closeProject()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          ${p.stats.map(s => `
+            <div class="stat-cell">
+              <div class="stat-cell-label">${s.l}</div>
+              <div class="stat-cell-value">${s.v}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="section-block">
+          <div class="section-label">Concept</div>
+          <div class="section-text">${p.concept}</div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-label">Phases &middot; PM lens</div>
+          ${p.phases.map(ph => `
+            <div class="phase-row">
+              <div class="phase-dot"></div>
+              <div class="phase-text"><strong>${ph.t}:</strong> ${ph.d}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="section-block">
+          <div class="section-label">PM complexity indicators</div>
+          ${p.pm.map(b => `
+            <div class="pm-bar-row">
+              <div class="pm-bar-label">${b.l}</div>
+              <div class="pm-bar-track"><div class="pm-bar-fill" style="--fill:${b.v}%"></div></div>
+              <div class="pm-bar-val">${b.v}%</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="section-block">
+          <div class="section-label">Tools used</div>
+          <div class="tools-row">
+            ${p.tools.map(t => `<span class="tool-pill">${t}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="pm-note">
+          <div class="pm-note-label">Why this matters for construction PM</div>
+          <div class="pm-note-text">${p.note}</div>
+        </div>
+
+        ${p.externalLink ? `
+          <div class="detail-link-row">
+            <a class="detail-link primary" href="${p.externalLink}" target="_blank" rel="noopener">View full thesis case study &rarr;</a>
+            <a class="detail-link secondary" href="#" onclick="event.preventDefault();closeProject()">Close panel</a>
+          </div>
+        ` : `
+          <div class="detail-link-row">
+            <a class="detail-link secondary" href="#" onclick="event.preventDefault();closeProject()">Close panel</a>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function renderProjects() {
+  const filtered = activeFilter === "all" ? PROJECTS : PROJECTS.filter(p => p.cat === activeFilter);
+  const grid = document.getElementById("projGrid");
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">No projects in this filter.</div>`;
+    return;
+  }
+
+  // Group projects in rows of 2; insert detail panel after the row that contains the open card
+  let html = "";
+  for (let i = 0; i < filtered.length; i++) {
+    const p = filtered[i];
+    html += buildCard(p, i);
+    
+    // After every 2 cards (or end of array), check if any card in this row is open
+    const isLastInRow = (i % 2 === 1) || (i === filtered.length - 1);
+    if (isLastInRow && openId) {
+      // Look at the cards in this row to see if openId is among them
+      const rowStart = i - (i % 2);
+      const rowCards = filtered.slice(rowStart, i + 1);
+      if (rowCards.some(c => c.id === openId)) {
+        const openP = PROJECTS.find(x => x.id === openId);
+        if (openP) html += buildDetail(openP);
+      }
+    }
+  }
+  grid.innerHTML = html;
+
+  // Trigger visible class
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".proj-card").forEach((card, i) => {
+      setTimeout(() => card.classList.add("visible"), i * 60);
+    });
+  });
+}
+
+function setFilter(filterId) {
+  activeFilter = filterId;
+  openId = null;
+  renderFilters();
+  renderProjects();
+}
+
+function toggleProject(id) {
+  if (openId === id) {
+    openId = null;
+  } else {
+    openId = id;
+  }
+  renderProjects();
+  
+  if (openId) {
+    setTimeout(() => {
+      const detail = document.getElementById(`detail-${openId}`);
+      if (detail) {
+        const rect = detail.getBoundingClientRect();
+        const offset = window.scrollY + rect.top - 90;
+        window.scrollTo({ top: offset, behavior: "smooth" });
+      }
+    }, 300);
+  }
+}
+
+function closeProject() {
+  openId = null;
+  renderProjects();
+}
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = window.matchMedia("(hover: none)").matches;
+const isSmallScreen = window.innerWidth < 768;
+
+if (!isTouch && !reduceMotion) {
+  const light = document.querySelector(".cursor-light");
+  window.addEventListener("pointermove", (e) => {
+    light.style.opacity = "1";
+    light.style.left = `${e.clientX}px`;
+    light.style.top = `${e.clientY}px`;
+  });
+}
+
+if (!isSmallScreen && !isTouch && !reduceMotion) {
+  const canvas = document.querySelector(".blueprint-canvas");
+  const ctx = canvas.getContext("2d");
+  let points = [];
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * ratio);
+    canvas.height = Math.floor(innerHeight * ratio);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    points = Array.from({ length: Math.max(20, Math.floor(innerWidth / 42)) }, () => ({
+      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+      vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32
+    }));
+  }
+  function drawBlueprint() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.lineWidth = 1;
+    points.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20 || p.x > innerWidth + 20) p.vx *= -1;
+      if (p.y < -20 || p.y > innerHeight + 20) p.vy *= -1;
+      for (let j = i + 1; j < points.length; j++) {
+        const q = points[j];
+        const dx = p.x - q.x; const dy = p.y - q.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 155) {
+          ctx.strokeStyle = `rgba(47,102,144,${(1 - dist / 155) * 0.18})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "rgba(47,102,144,0.22)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(drawBlueprint);
+  }
+  resizeCanvas();
+  drawBlueprint();
+  window.addEventListener("resize", resizeCanvas);
+} else {
+  document.querySelector(".blueprint-canvas").style.display = "none";
+}
+
+renderFilters();
+renderProjects();
+</script>
+</body>
+</html>
