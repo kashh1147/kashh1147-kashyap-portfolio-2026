@@ -702,7 +702,7 @@ body::before {
   <header class="widget-header">
     <div class="widget-header-inner">
       <div class="eyebrow">Architecture &middot; Design Portfolio</div>
-      <h1 class="widget-title">Six academic projects. <span class="accent">Read through a construction PM lens.</span></h1>
+      <h1 class="widget-title">Seven academic projects. <span class="accent">Read through a construction PM lens.</span></h1>
       <p class="widget-lead">From a 49,000 sqm thesis campus to detailed interior fit-outs — each project is a coordination story. Click any card to expand the full case study with PM complexity, tools used, and why it matters for construction project management.</p>
 
       <div class="filter-bar" id="filterBar"></div>
@@ -763,7 +763,8 @@ const PROJECTS = [
     accentDark: "#1f4d70",
     accentBg: "rgba(47,102,144,0.06)",
     accentBorder: "rgba(47,102,144,0.22)",
-    image: null,
+    image: "../assets/images/renders/crematorium-aerial.jpg",
+    imageAlt: "Crematorium aerial view with Ganga riverfront",
     placeholderLabel: "Civic &middot; Riverfront",
     placeholderName: "Crematorium project render",
     placeholderFile: "crematorium-aerial.jpg",
@@ -801,7 +802,8 @@ const PROJECTS = [
     accentDark: "#8e5e25",
     accentBg: "rgba(195,131,63,0.06)",
     accentBorder: "rgba(195,131,63,0.22)",
-    image: null,
+    image: "../assets/images/renders/apmc-render.jpg",
+    imageAlt: "APMC wholesale market courtyard aerial render",
     placeholderLabel: "Commercial &middot; Market",
     placeholderName: "APMC market render",
     placeholderFile: "apmc-render.jpg",
@@ -830,16 +832,56 @@ const PROJECTS = [
     note: "Directly transferable to US commercial/industrial PM work: complex multi-user program, phased construction in a live operational environment, heavy vehicle logistics, and large-span structural coordination."
   },
   {
-    id: "firestation",
-    cat: "civic",
+    id: "residence",
+    cat: "residential",
     num: "04",
-    title: "Fire Station + Fireman Housing — Surat",
-    meta: "Sem 8 &middot; 1 acre &middot; Majuragate &middot; Mixed-use campus",
+    title: "Residence — Bhuj, Kutch",
+    meta: "Sem 3 &middot; 1,500 sqm &middot; Ajrakh artisan family villa &middot; G+1",
     accent: "#a64b43",
     accentDark: "#7c3933",
     accentBg: "rgba(166,75,67,0.06)",
     accentBorder: "rgba(166,75,67,0.22)",
-    image: null,
+    image: "../assets/images/renders/residence-bhuj.jpg",
+    imageAlt: "Residence Bhuj — brick and render villa exterior",
+    placeholderLabel: "Residential &middot; Villa",
+    placeholderName: "Bhuj residence render",
+    placeholderFile: "residence-bhuj.jpg",
+    tags: ["Residential", "Traditional + modern", "Full working drawings"],
+    cta: "Expand case study",
+    stats: [
+      { l: "Site area", v: "1,500 sqm" },
+      { l: "Location", v: "Bhuj City, Kutch" },
+      { l: "Floors", v: "Ground + 1" },
+      { l: "Family", v: "7 members, 3 gen" }
+    ],
+    concept: "Client: Ismail Katri family from the <strong>Ajrakh block-printing community</strong>. The family is moving from craft village to city and wants to keep tradition alongside modern conveniences. Concept diagram resolves to three overlapping circles: <strong>Tradition + Culture + Work + Living</strong>. Spatial logic generated through a stepwise massing study — house, courtyard, cut-in-2-parts, pull-parts, interlock.",
+    phases: [
+      { t: "Site analysis", d: "1,500 sqm flat plot in Bhuj City, Kutch. Front faces Hamirsar Lake. Side connection to main road feeding the railway and bus station. International school within 2 km. Hot and dry climate drove courtyard-based passive cooling strategy." },
+      { t: "Spatial program", d: "Ground floor (20 zones): parking, porch, foyer, living, open living, dining, kitchen, seating area, deck, bedroom-1, guest room, office, library, staircase, 2nd entry, garden, back entry, gazebo, courtyard, landscape. First floor: 4 bedrooms (2 to 5), passage, study room, living, terrace." },
+      { t: "Working drawings", d: "Full working drawing set produced: centerline plan, demarcation plan, sections AA' and BB', four elevations, electrical layout, flooring plan, door and window schedules, stair detail. Toilets, staircase, bedroom, dining, living zones colour-coded across isometric breakdowns." },
+      { t: "PM lens", d: "First project with a complete construction documentation package. Understanding how every design decision translates into buildable information for masons, carpenters, electricians, and plumbers — and how missing dimensions in working drawings turn into RFIs on site." }
+    ],
+    pm: [
+      { l: "Documentation completeness", v: 95 },
+      { l: "Client coordination", v: 88 },
+      { l: "Climate response", v: 85 },
+      { l: "Construction readiness", v: 90 }
+    ],
+    tools: ["AutoCAD", "SketchUp", "V-Ray", "Photoshop"],
+    note: "This project produced the most complete construction documentation set of any student work. Centerline plans, demarcation drawings, electrical layouts, schedules — the level of rigor field PMs rely on. The same translation discipline (design intent &rarr; buildable drawings &rarr; clean site execution) is what RFI and submittal management is built on."
+  },
+  {
+    id: "firestation",
+    cat: "civic",
+    num: "05",
+    title: "Fire Station + Fireman Housing — Surat",
+    meta: "Sem 8 &middot; 1 acre &middot; Majuragate &middot; Mixed-use campus",
+    accent: "#6860a8",
+    accentDark: "#4a4480",
+    accentBg: "rgba(104,96,168,0.06)",
+    accentBorder: "rgba(104,96,168,0.22)",
+    image: "../assets/images/renders/firestation-render.jpg",
+    imageAlt: "Majura Fire Station with G+5 fireman housing aerial render",
     placeholderLabel: "Civic + Residential",
     placeholderName: "Fire station campus render",
     placeholderFile: "firestation-render.jpg",
@@ -870,14 +912,15 @@ const PROJECTS = [
   {
     id: "interior",
     cat: "residential",
-    num: "05",
+    num: "06",
     title: "Interior Design — Bhuj",
     meta: "Sem 6 &middot; Bedroom + wardrobe + TV unit &middot; Gujarat",
     accent: "#6860a8",
     accentDark: "#4a4480",
     accentBg: "rgba(104,96,168,0.06)",
     accentBorder: "rgba(104,96,168,0.22)",
-    image: null,
+    image: "../assets/images/renders/interior-bhuj.jpg",
+    imageAlt: "Bhuj interior bedroom with Ajrak block-print motifs",
     placeholderLabel: "Residential &middot; Interior",
     placeholderName: "Interior bedroom render",
     placeholderFile: "interior-bhuj.jpg",
@@ -908,14 +951,15 @@ const PROJECTS = [
   {
     id: "housing",
     cat: "residential",
-    num: "06",
+    num: "07",
     title: "Incremental Housing — Artisan Communities",
     meta: "Studio project &middot; Affordable + adaptive housing",
     accent: "#0c447c",
     accentDark: "#082c54",
     accentBg: "rgba(12,68,124,0.06)",
     accentBorder: "rgba(12,68,124,0.22)",
-    image: null,
+    image: "../assets/images/renders/housing-render.jpg",
+    imageAlt: "Incremental housing cluster with central water feature street view",
     placeholderLabel: "Residential &middot; Affordable",
     placeholderName: "Incremental housing render",
     placeholderFile: "housing-render.jpg",
